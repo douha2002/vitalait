@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Equipement extends Model
+{
+    use HasFactory;
+
+    protected $table = 'equipements'; // Ensure the table is named "equipements" (not "equipment")
+    protected $primaryKey = 'numero_de_serie'; // The primary key is 'numero_de_serie' (not 'id')
+    public $incrementing = false; // The primary key is not auto-incrementing
+    protected $keyType = 'string'; // The primary key is a string (not an integer)
+
+    // Combine both $fillable arrays into one
+    protected $fillable = [
+        'numero_de_serie',
+        'article',
+        'quantite',
+        'date_acquisition',
+        'date_de_mise_en_oeuvre', // Ensure this is the correct column name in the database
+        'categorie',
+        'sous_categorie',
+        'matricule',
+    ];
+
+    // Optionally, you can define date attributes to auto-convert to Carbon instances
+    protected $dates = [
+        'date_acquisition',
+        'date_de_mise_en_oeuvre',
+    ];
+    public function category()
+{
+    return $this->belongsTo(Category::class);
+}
+
+}
