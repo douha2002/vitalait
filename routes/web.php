@@ -40,7 +40,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
-    Route::get('/equipments/create', [EquipmentController::class, 'create'])->name('equipments.create');
     Route::post('/equipments/store', [EquipmentController::class, 'store'])->name('equipments.store');
     Route::post('/equipments/import', [EquipmentController::class, 'import'])->name('equipments.import'); 
     Route::get('/equipments/{numero_de_serie}/edit', [EquipmentController::class, 'edit'])->name('equipments.edit');

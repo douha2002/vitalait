@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('equipements', function (Blueprint $table) {
             $table->string('numero_de_serie')->primary(); // Set as primary key
-            $table->string('article');
-            $table->integer('quantite');
-            $table->date('date_acquisition');
-            $table->date('date_de_mise_en_oeuvre');
-            $table->string('categorie');
-            $table->string('sous_categorie');
-            $table->string('matricule');
+            $table->string('article')->nullable();
+            $table->integer('quantite')->nullable();
+            $table->date('date_acquisition')->nullable();
+            $table->date('date_de_mise_en_oeuvre')->nullable();
+            $table->string('categorie')->nullable();
+            $table->string('sous_categorie')->nullable();
+            $table->string('matricule')->nullable();
             $table->timestamps();
         });
     }
