@@ -42,7 +42,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
     Route::post('/equipments/store', [EquipmentController::class, 'store'])->name('equipments.store');
     Route::post('/equipments/import', [EquipmentController::class, 'import'])->name('equipments.import'); 
-    Route::get('/equipments/{numero_de_serie}/edit', [EquipmentController::class, 'edit'])->name('equipments.edit');
     Route::put('/equipments/{numero_de_serie}', [EquipmentController::class, 'update'])->name('equipments.update');
     Route::delete('/equipments/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
     Route::get('/search', [SearchController::class, 'search'])->name('search');

@@ -39,54 +39,64 @@ class EquipmentController extends Controller
 
     
 
-    public function import(Request $request) // Removed unnecessary $numero_de_serie parameter
-    {
-        // Validate the uploaded file
-        $request->validate([
-            'file' => 'required|mimes:csv,xlsx,xls,txt'
-        ]);
+public function import(Request $request)
+{
+    // Validate the uploaded file
+    $request->validate([
+        'file' => 'required|mimes:csv,xlsx,xls,txt'
+    ]);
 
+    // Create an instance of the import class
+    $import = new EquipementsImport();
 
-        
-        Excel::import(new EquipementsImport, $request->file('file'));
-        
+    // Perform the import
+    Excel::import($import, $request->file('file'));
 
-        return redirect()->route('equipments.index')->with('success', 'Importation réussie!');
+    // Get errors and success count from the import class
+    $errors = $import->getErrors();
+    $successCount = $import->getSuccessCount();  // Get the number of successful imports
+
+    // Store the success message
+    $successMessage = "Importation réussie pour $successCount équipements.";
+
+    // Store the error messages (if any)
+    if (!empty($errors)) {
+        // Pass errors as a validation error bag
+        return redirect()->route('equipments.index')->withErrors($errors)->with('success', $successMessage);
     }
 
-    public function edit($numero_de_serie)
-    {
-        $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
-        return view('equipments.edit', compact('equipment'));
-    }
+    // Flash the success message if there are no errors
+    return redirect()->route('equipments.index')->with('success', $successMessage);
+}
+
+
+
+
+
+
+   
 
     public function update(Request $request, $numero_de_serie)
     {
-        $request->validate([
-            'numero_de_serie' => 'required|string|unique:equipements,numero_de_serie,' . $numero_de_serie . ',numero_de_serie',
-            'article' => 'nullable|string',
-            'quantite' => 'nullable|integer',
+        $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
+    
+        $validatedData = $request->validate([
+            'numero_de_serie' => 'required|string|unique:equipements,numero_de_serie,' . $equipment->numero_de_serie . ',numero_de_serie',
+            'article' => 'nullable|string|max:255',
+            'quantite' => 'nullable|integer|min:1',
             'date_acquisition' => 'nullable|date',
             'date_de_mise_en_oeuvre' => 'nullable|date',
-            'categorie' => 'nullable|string',
-            'sous_categorie' => 'nullable|string',
-            'matricule' => 'nullable|string',
+            'categorie' => 'nullable|string|max:255',
+            'sous_categorie' => 'nullable|string|max:255',
+            'matricule' => 'nullable|string|max:255',
         ]);
-
-        $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
-
-        // Debugging: Log request and equipment before update
-        \Log::info('Request data:', $request->all());
-        \Log::info('Equipment before update:', $equipment->toArray());
-
-        // Update the equipment
-        $equipment->update($request->all());
-
-        // Debugging: Log after update
-        \Log::info('Equipment after update:', $equipment->fresh()->toArray());
-
+    
+        $equipment->update($validatedData);
+    
         return redirect()->route('equipments.index')->with('success', 'Équipement modifié avec succès.');
     }
+    
+    
 
     public function destroy($numero_de_serie)
     {

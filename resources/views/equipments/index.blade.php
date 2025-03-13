@@ -17,6 +17,10 @@ data-bs-placement="top"
 title="Importer un fichier CSV">
 <i class="fas fa-upload me-2"></i> 
 </button>
+<!-- In your Blade view (equipments.index.blade.php) -->
+
+
+
 
 <!-- Import Form in Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
@@ -191,12 +195,12 @@ title="Ajouter un nouvel équipement">
                     
                     <td>
                         <!-- Modifier button with icon -->
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editEquipmentModal">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
                             <i class="fas fa-edit"></i>
                         </button>
                     
                         <!-- Modal Structure -->
-                        <div class="modal fade" id="editEquipmentModal" tabindex="-1" aria-labelledby="editEquipmentModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="editEquipmentModal{{ $equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="editEquipmentModalLabel{{ $equipment->numero_de_serie }}" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header bg-primary text-white">
@@ -311,6 +315,7 @@ title="Ajouter un nouvel équipement">
 </div>
 
 
+{{-- Success Message --}}
 @if(session('success'))
     <div class="alert alert-success" id="success-message" style="
         position: fixed;
@@ -332,25 +337,47 @@ title="Ajouter un nouvel équipement">
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Fade out success message after 3 seconds
+            // Fade out success message after error message disappears
+            const errorMessage = document.getElementById('error-message');
             const successMessage = document.getElementById('success-message');
-            if (successMessage) {
+            
+            if (errorMessage) {
                 setTimeout(() => {
-                    successMessage.style.transition = "opacity 0.5s";
-                    successMessage.style.opacity = "0";
-                    setTimeout(() => successMessage.remove(), 500);
-                }, 3000);
+                    errorMessage.style.transition = "opacity 0.5s";
+                    errorMessage.style.opacity = "0";
+                    setTimeout(() => {
+                        errorMessage.remove();
+                        if (successMessage) {
+                            successMessage.style.transition = "opacity 0.5s";
+                            successMessage.style.opacity = "1";
+                            setTimeout(() => successMessage.remove(), 5000); // Remove after 5 seconds
+                        }
+                    }, 500);
+                }, 3000); // Wait for 3 seconds before hiding the error message
             }
-    
-            // Initialize Bootstrap tooltips
-            var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-                new bootstrap.Tooltip(tooltipTriggerEl);
-            });
+            else {
+                // If no error message, show success directly
+                if (successMessage) {
+                    setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
+                }
+            }
         });
     </script>
-
 @endif
+
+{{-- Error Messages --}}
+@if($errors->any())
+    <div class="alert alert-danger" id="error-message" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 50%; text-align: center; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
+
 
 @include('layouts.sidebar')
 
