@@ -8,6 +8,8 @@ use App\Http\Controllers\EquipementImportController;
 use App\Imports\EquipementsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\AssignmentController;
+use App\Models\Assignment;
 
 
 Route::get('/', function () {
@@ -46,6 +48,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/equipments/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+    Route::get('/assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
+    Route::post('/assignments/store', [AssignmentController::class, 'store'])->name('assignments.store');
+    Route::get('/assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
+    Route::put('/assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
+    Route::delete('/assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+    Route::get('/equipments/{numero_de_serie}/history', [AssignmentController::class, 'show'])->name('equipments.history');
 });
 
 

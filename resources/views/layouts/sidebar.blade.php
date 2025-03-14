@@ -96,7 +96,7 @@
                     </a>
                 </li>
                 <li class="mb-3">
-                    <a href="#" class="text-white text-decoration-none">
+                    <a href="{{ route('assignments.index') }}" class="text-white text-decoration-none">
                         <i class="fas fa-users me-2"></i> Affectation
                     </a>
                 </li>

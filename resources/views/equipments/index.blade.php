@@ -20,8 +20,6 @@ title="Importer un fichier CSV">
 <!-- In your Blade view (equipments.index.blade.php) -->
 
 
-
-
 <!-- Import Form in Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
 <div class="modal-dialog">
@@ -375,8 +373,6 @@ title="Ajouter un nouvel équipement">
         </ul>
     </div>
 @endif
-
-
 
 
 @include('layouts.sidebar')

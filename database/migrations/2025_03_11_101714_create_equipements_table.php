@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('sous_categorie')->nullable();
             $table->string('matricule')->nullable();
             $table->timestamps();
+
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
         });
     }
 

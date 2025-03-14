@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Category;
+use App\Models\Assignment;
 
 class Equipement extends Model
 {
@@ -36,4 +38,8 @@ class Equipement extends Model
     return $this->belongsTo(Category::class);
 }
 
+public function assignments()
+{
+    return $this->hasMany(Assignment::class, 'numero_de_serie', 'numero_de_serie');
+}
 }
