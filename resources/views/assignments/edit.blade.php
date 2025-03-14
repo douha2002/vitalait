@@ -23,9 +23,9 @@
             <label for="equipement" >Équipement :</label>
             <select name="numero_de_serie" id="equipment" class="form-control" required>
                 <option value="">-- Sélectionner un équipement --</option>
-                @foreach($equipments as $equipment)
-                    <option value="{{ $equipment->numero_de_serie }}" {{ $assignment->numero_de_serie == $equipment->numero_de_serie ? 'selected' : '' }}>
-                        {{ $equipment->matricule }} ({{ $equipment->numero_de_serie ?? 'N/A' }})
+                @foreach($equipments as $equip) {{-- Renamed loop variable --}}
+                <option value="{{ $equip->numero_de_serie }}"{{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>{{ $equip->numero_de_serie }}</option>
+                        {{ $equip->numero_de_serie }}
                     </option>
                 @endforeach
             </select>
@@ -36,8 +36,8 @@
             <select name="employees_id" id="employee" class="form-control" required>
                 <option value="">-- Sélectionner un employé --</option>
                 @foreach($employees as $employee)
-                    <option value="{{ $employee->id }}" {{ $assignment->employees_id == $employee->id ? 'selected' : '' }}>
-                        {{ $employee->name }} ({{ $employee->email }})
+                    <option value="{{ $employee->matricule }}" {{ $assignment->employees_id == $employee->matricule ? 'selected' : '' }}> {{-- Matricule used here --}}
+                        {{ $employee->nom }} {{ $employee->prenom }}
                     </option>
                 @endforeach
             </select>
@@ -45,12 +45,12 @@
 
         <div class="mb-3">
             <label for="start_date" >Date de début :</label>
-            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $assignment->start_date }}" required>
+            <input type="date" name="start_date" id="start_date" class="form-control"  value="{{ old('start_date', $assignment->start_date ?? '') }}" required>
         </div>
 
         <div class="mb-3">
             <label for="end_date" >Date de fin :</label>
-            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $assignment->end_date }}">
+            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $assignment->end_date ?? '') }}">
             <small class="text-muted">Laissez vide si l'affectation est toujours en cours.</small>
         </div>
 

@@ -2,9 +2,20 @@
 
 @section('content') 
 
-@include('partials.search')
 
 <div class="container">
+    <div class="search-container">
+        <form method="GET" action="{{ route('search') }}" class="search-form">
+            <input type="text" name="search" id="search" placeholder="Rechercher par Article,Quantité etc.." >
+            <button type="submit"><i class="fas fa-search"></i></button>
+       
+        
+        <!-- Reset Filter Button -->
+        <a href="{{ route('equipments.index') }}" class="reset-filter-btn" title="Réinitialiser la recherche">
+            <i class="fas fa-sync-alt"></i> 
+        </a>
+    </form>
+    </div>
     
 <div class="d-flex justify-content-end mb-3">
 

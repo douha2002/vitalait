@@ -17,7 +17,13 @@
         <tbody>
             @foreach($equipment->assignments as $assignment)
                 <tr>
-                    <td>{{ $assignment->employee->name }}</td>
+                    <td>
+                        @if ($assignment->employee)
+                            {{ $assignment->employee->nom }} {{ $assignment->employee->prenom }}
+                        @else
+                            <span class="text-danger">Employé inconnu</span>
+                        @endif
+                    </td>
                     <td>{{ $assignment->start_date }}</td>
                     <td>{{ $assignment->end_date ?? 'En cours' }}</td>
                 </tr>

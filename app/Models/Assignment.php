@@ -19,7 +19,6 @@ class Assignment extends Model
         'end_date',
     ];
 
-   // In App\Models\Assignment
    public function equipment()
    {
        return $this->belongsTo(Equipement::class, 'numero_de_serie', 'numero_de_serie');
@@ -27,7 +26,8 @@ class Assignment extends Model
 
 
    public function employee()
-   {
-       return $this->belongsTo(Employee::class, 'employees_id', 'id');
-   }
+{
+    return $this->belongsTo(Employee::class, 'employees_id', 'matricule'); 
+}
+
 }

@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
     Route::delete('/assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
     Route::get('/equipments/{numero_de_serie}/history', [AssignmentController::class, 'show'])->name('equipments.history');
+
 });
 
 
