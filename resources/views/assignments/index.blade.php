@@ -6,13 +6,7 @@
 <div class="container">
     <h2>Gestion des Affectations</h2>
     
-    {{-- Formulaire de recherche --}}
-    <form method="GET" action="{{ route('assignments.index') }}" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Rechercher par matricule ou article..." value="{{ request('search') }}">
-            <button type="submit" class="btn btn-primary">Rechercher</button>
-        </div>
-    </form>
+    
     <a href="{{ route('assignments.create') }}" class="btn btn-primary">Nouvelle Affectation</a>
     <table class="table mt-3">
         <thead>

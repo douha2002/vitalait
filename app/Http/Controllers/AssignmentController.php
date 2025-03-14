@@ -9,22 +9,24 @@ use App\Models\Employee;
 
 class AssignmentController extends Controller
 {
-    public function index()
-{
-    $assignments = Assignment::with(['equipment', 'employee'])->get();
-     // Recherche par équipement (matricule ou article)
-     if ($request->has('search')) {
-        $search = $request->input('search');
-        $query->whereHas('equipment', function ($q) use ($search) {
-            $q->where('numero_de_serie', 'like', "%$search%")
-              ->orWhere('matricule', 'like', "%$search%");
-        });
+    public function index(Request $request)
+    {
+        $query = Assignment::with(['equipment', 'employee']);
+    
+        // Recherche par équipement (matricule ou article)
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->whereHas('equipment', function ($q) use ($search) {
+                $q->where('numero_de_serie', 'like', "%$search%")
+                  ->orWhere('matricule', 'like', "%$search%");
+            });
+        }
+    
+        $assignments = $query->get();
+    
+        return view('assignments.index', compact('assignments'));
     }
-
-    $assignments = $query->get();
-
-    return view('assignments.index', compact('assignments'));
-}
+    
     
 
     public function create()
