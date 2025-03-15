@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Equipement;
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Assignment extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'numero_de_serie',

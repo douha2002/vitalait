@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('employees', function (Blueprint $table) {
-            $table->string('matricule')->primary();            
-            $table->string('nom');
-            $table->string('prenom');
-            $table->string('poste');
-            $table->string('email')->unique();
+        Schema::table('assignments', function (Blueprint $table) {
+            $table->softDeletes(); // This will add the 'deleted_at' column
+
         });
     }
 
@@ -25,6 +22,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('employees');
+        Schema::table('assignments', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+
+        });
     }
 };

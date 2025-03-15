@@ -12,16 +12,22 @@ class AssignmentController extends Controller
     // List all assignments with optional search
     public function index(Request $request)
     {
+        // Get assignments, eager load equipment and employee relations
         $assignments = Assignment::with(['equipment', 'employee'])
             ->when($request->search, function ($query) use ($request) {
                 return $query->where('numero_de_serie', 'like', '%' . $request->search . '%')
                              ->orWhere('employees_id', 'like', '%' . $request->search . '%');
             })
             ->get();
-
-        return view('assignments.index', compact('assignments'));
+    
+        // Fetch all equipment and employees
+        $equipments = Equipement::all();
+        $employees = Employee::all();
+    
+        // Pass assignments, equipments, and employees to the view
+        return view('assignments.index', compact('assignments', 'equipments', 'employees'));
     }
-
+    
     // Show the form to create a new assignment
     public function create()
     {
@@ -102,27 +108,40 @@ class AssignmentController extends Controller
     
      // In AssignmentController.php
 
-public function destroy(Assignment $assignment)
-{
-    // Mark the assignment as ended by setting the end_date to the current date
-    $assignment->update(['end_date' => now()]);
-
-    // Redirect to the assignment index page with a success message
-    return redirect()->route('assignments.index')->with('success', 'Affectation supprimée avec succès.');
-}
-public function show($numero_de_serie)
-{
-    // Get the equipment by numero_de_serie and eager load its related assignments
-    $equipment = Equipement::with('assignments.employee')->where('numero_de_serie', $numero_de_serie)->first();
-
-    // Handle the case when no equipment is found
-    if (!$equipment) {
-        return redirect()->route('assignments.index')->withErrors('Équipement introuvable.');
-    }
-
-    // Return the view with the equipment and its assignments
-    return view('assignments.history', compact('equipment'));
-}
+     public function destroy(Assignment $assignment)
+     {
+         // Check if the end_date is null (the assignment is still ongoing)
+         if ($assignment->end_date === null) {
+             // Return with an error message if the assignment is still ongoing
+             return redirect()->route('assignments.index')
+                              ->withErrors('Impossible de supprimer cette affectation, elle est toujours en cours.');
+         }
+     
+         // Mark the assignment as ended by setting the end_date to the current date
+         $assignment->update(['end_date' => now()]);
+     
+         // Redirect to the assignment index page with a success message
+         return redirect()->route('assignments.index')
+                          ->with('success', 'Affectation supprimée avec succès.');
+     }
+     
+     
+     public function show($numero_de_serie)
+     {
+         // Get the equipment by numero_de_serie and eager load its related assignments (including soft-deleted ones)
+         $equipment = Equipement::with(['assignments' => function($query) {
+             $query->withTrashed(); // Include soft-deleted assignments
+         }])->where('numero_de_serie', $numero_de_serie)->first();
+     
+         // Handle the case when no equipment is found
+         if (!$equipment) {
+             return redirect()->route('assignments.index')->withErrors('Équipement introuvable.');
+         }
+     
+         // Return the view with the equipment and its assignments
+         return view('assignments.history', compact('equipment'));
+     }
+     
 
 
     
