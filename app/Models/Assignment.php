@@ -11,8 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Assignment extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory , SoftDeletes;
 
     protected $fillable = [
         'numero_de_serie',
@@ -20,6 +19,8 @@ class Assignment extends Model
         'start_date',
         'end_date',
     ];
+    protected $dates = ['deleted_at']; // Permet d'utiliser les soft deletes
+
 
    public function equipment()
    {

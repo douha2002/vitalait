@@ -49,12 +49,22 @@ class AssignmentController extends Controller
             'end_date' => 'nullable|date|after:start_date',
         ]);
     
+        // Create the assignment
         Assignment::create([
             'numero_de_serie' => $request->numero_de_serie,
             'employees_id' => $request->employees_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date ?? null, // Null if empty
         ]);
+    
+        // Update the equipment status
+        $equipment = Equipement::findOrFail($request->numero_de_serie);
+        if ($request->end_date) {
+            $equipment->statut = 'En cours';
+        } else {
+            $equipment->statut = 'Affecté';
+        }
+        $equipment->save();
     
         return redirect()->route('assignments.index')->with('success', 'Équipement affecté avec succès.');
     }
@@ -77,70 +87,88 @@ class AssignmentController extends Controller
 
     // Update the assignment
     public function update(Request $request, Assignment $assignment)
-    {
-        $request->validate([
-            'employees_id' => 'required|exists:employees,matricule',
-            'start_date' => 'required|date|before_or_equal:end_date',
-            'end_date' => 'nullable|date|after_or_equal:start_date', // Ensure end date is valid
+{
+    $request->validate([
+        'employees_id' => 'required|exists:employees,matricule',
+        'start_date' => 'required|date|before_or_equal:end_date',
+        'end_date' => 'nullable|date|after_or_equal:start_date', // Ensure end date is valid
+    ]);
+
+    // Check if employee is being changed
+    $employeeChanged = $assignment->employees_id !== $request->employees_id;
+
+    if ($employeeChanged) {
+        // End the current assignment with the provided end_date
+        $assignment->update(['end_date' => $request->end_date]);
+
+        // Create a new assignment for the new employee
+        Assignment::create([
+            'numero_de_serie' => $assignment->numero_de_serie,
+            'employees_id' => $request->employees_id,
+            'start_date' => $request->end_date, // New start date = old assignment's end date
+            'end_date' => null, // Open-ended new assignment
         ]);
-    
-        // Check if employee is being changed
-        $employeeChanged = $assignment->employees_id !== $request->employees_id;
-    
-        if ($employeeChanged) {
-            // End the current assignment with the provided end_date
-            $assignment->update(['end_date' => $request->end_date]);
-    
-            // Create a new assignment for the new employee
-            Assignment::create([
-                'numero_de_serie' => $assignment->numero_de_serie,
-                'employees_id' => $request->employees_id,
-                'start_date' => $request->end_date, // New start date = old assignment's end date
-                'end_date' => null, // Open-ended new assignment
-            ]);
-        } else {
-            // Simply update the end date if the employee remains the same
-            $assignment->update(['end_date' => $request->end_date]);
-        }
-    
-        return redirect()->route('assignments.index')->with('success', 'Affectation modifiée avec succès.');
+    } else {
+        // Simply update the end date if the employee remains the same
+        $assignment->update(['end_date' => $request->end_date]);
     }
+
+    // Update the equipment status
+    $equipment = Equipement::findOrFail($assignment->numero_de_serie);
+    if ($request->end_date) {
+        $equipment->statut = 'En cours';
+    } else {
+        $equipment->statut = 'Affecté';
+    }
+    $equipment->save();
+
+    return redirect()->route('assignments.index')->with('success', 'Affectation modifiée avec succès.');
+}
     
      // In AssignmentController.php
 
      public function destroy(Assignment $assignment)
-     {
-         // Check if the end_date is null (the assignment is still ongoing)
-         if ($assignment->end_date === null) {
-             // Return with an error message if the assignment is still ongoing
-             return redirect()->route('assignments.index')
-                              ->withErrors('Impossible de supprimer cette affectation, elle est toujours en cours.');
-         }
+{
+    if ($assignment->end_date === null) {
+        return redirect()->route('assignments.index')
+                         ->withErrors('Impossible de supprimer cette affectation, elle est toujours en cours.');
+    }
+
+    $assignment->delete(); // Soft delete
+
+    // Check if the equipment has any other active assignments
+    $hasActiveAssignments = Assignment::where('numero_de_serie', $equipement->numero_de_serie)
+        ->whereNull('end_date') // Check for open-ended assignments
+        ->exists();
+
+    // If the equipment has no active assignments, update its status to "En cours"
+    if (!$hasActiveAssignments) {
+        $equipment->statut = 'En cours';
+        $equipment->save();
+    }
+
+    return redirect()->route('assignments.index')
+                     ->with('success', 'Affectation archivée avec succès.');
+}
+
      
-         // Mark the assignment as ended by setting the end_date to the current date
-         $assignment->update(['end_date' => now()]);
-     
-         // Redirect to the assignment index page with a success message
-         return redirect()->route('assignments.index')
-                          ->with('success', 'Affectation supprimée avec succès.');
-     }
-     
-     
-     public function show($numero_de_serie)
-     {
-         // Get the equipment by numero_de_serie and eager load its related assignments (including soft-deleted ones)
-         $equipment = Equipement::with(['assignments' => function($query) {
-             $query->withTrashed(); // Include soft-deleted assignments
-         }])->where('numero_de_serie', $numero_de_serie)->first();
-     
-         // Handle the case when no equipment is found
-         if (!$equipment) {
-             return redirect()->route('assignments.index')->withErrors('Équipement introuvable.');
-         }
-     
-         // Return the view with the equipment and its assignments
-         return view('assignments.history', compact('equipment'));
-     }
+public function showHistory($numero_de_serie)
+{
+    // Retrieve the equipment by its serial number and its assignment history
+    $equipment = Equipement::with(['assignments' => function($query) {
+        $query->withTrashed(); // Include soft-deleted assignments
+    }])->where('numero_de_serie', $numero_de_serie)->first();
+
+    // If equipment not found, return error
+    if (!$equipment) {
+        return response()->json(['error' => 'Équipement introuvable.'], 404);
+    }
+
+    // Return the partial view for the assignment history
+    return view('assignments.history', compact('equipment'));
+}
+
+
      
 
 

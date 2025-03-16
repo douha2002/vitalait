@@ -181,10 +181,12 @@ title="Ajouter un nouvel équipement">
                 <th>Catégorie</th>
                 <th>Sous Catégorie</th>
                 <th>Matricule</th>
+                <th>Statut</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
+
             @if($equipments->isEmpty())
             <tr>
                 <td colspan="9" class="text-center">Aucun équipement trouvé correspondant à votre recherche.</td>
@@ -201,6 +203,7 @@ title="Ajouter un nouvel équipement">
                     <td>{{ $equipment->categorie ?? '-' }}</td>
                     <td>{{ $equipment->sous_categorie ?? '-' }}</td>
                     <td>{{ $equipment->matricule ?? '-' }}</td>
+                    <td>{{ $equipment->statut ?? '-' }}</td>
                     
                     <td>
                         <!-- Modifier button with icon -->

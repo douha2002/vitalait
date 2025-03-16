@@ -26,6 +26,7 @@ class Equipement extends Model
         'categorie',
         'sous_categorie',
         'matricule',
+        'statut',
     ];
 
     // Optionally, you can define date attributes to auto-convert to Carbon instances
@@ -41,5 +42,23 @@ class Equipement extends Model
 public function assignments()
 {
     return $this->hasMany(Assignment::class, 'numero_de_serie', 'numero_de_serie');
+
+}
+public function hasActiveAssignments()
+{
+    return $this->assignments()->whereNull('end_date')->exists();
+}
+protected static function boot()
+{
+    parent::boot();
+
+    // Update status when an equipment is saved
+    static::saving(function ($equipment) {
+        if ($equipment->hasActiveAssignments()) {
+            $equipment->statut = 'affecté';
+        } else {
+            $equipment->statut = 'en cours';
+        }
+    });
 }
 }

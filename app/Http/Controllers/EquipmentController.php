@@ -70,12 +70,6 @@ public function import(Request $request)
 }
 
 
-
-
-
-
-   
-
     public function update(Request $request, $numero_de_serie)
     {
         $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
@@ -99,13 +93,23 @@ public function import(Request $request)
     
 
     public function destroy($numero_de_serie)
-    {
-        $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
-        $equipment->delete();
+{
+    \Log::info('Attempting to delete equipment with serial number: ' . $numero_de_serie);
+    $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
+    \Log::info('Equipment found: ' . $equipment->numero_de_serie);
 
-
-        return redirect()->route('equipments.index')->with('success', 'Équipement supprimé.');
+    if ($equipment->assignments()->exists()) {
+        \Log::info('Equipment has assignments, cannot delete.');
+        return redirect()->route('equipments.index')
+            ->with('error', 'Impossible de supprimer cet équipement car il est encore assigné.');
     }
+
+    $equipment->delete();
+    \Log::info('Equipment deleted successfully.');
+
+    return redirect()->route('equipments.index')->with('success', 'Équipement supprimé.');
+}
+
 
     public function search(Request $request)
     {

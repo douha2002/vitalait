@@ -90,134 +90,133 @@
                     <td>{{ $assignment->start_date }}</td>
                     <td>{{ $assignment->end_date ?? 'En cours' }}</td>
                     <td>
-                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
-                                <i class="fas fa-edit"></i>
-                            </button>   
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
+                            <i class="fas fa-edit"></i>
+                        </button>   
                          
-                            <!-- Modal Structure -->
-                            <div class="modal fade" id="editAssignmentModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="editAssignmentModalLabel{{ $assignment->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title" id="editAssignmentModalLabel{{ $assignment->id }}">
-                                                <i class="fas fa-box me-2"></i>Modifier l'affectation
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="POST" action="{{ route('assignments.update', $assignment->id) }}">
-                                                @csrf
-                                                @method('PUT')
+                        <!-- Modal Structure -->
+                        <div class="modal fade" id="editAssignmentModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="editAssignmentModalLabel{{ $assignment->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="editAssignmentModalLabel{{ $assignment->id }}">
+                                            <i class="fas fa-box me-2"></i>Modifier l'affectation
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="POST" action="{{ route('assignments.update', $assignment->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            
+                                            <div class="mb-3">
+                                                <label for="equipement">Équipement :</label>
+                                                <select name="numero_de_serie" id="equipment" class="form-control" required>
+                                                    <option value="">-- Sélectionner un équipement --</option>
+                                                    @foreach($equipments as $equip)
+                                                        <option value="{{ $equip->numero_de_serie }}" {{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>
+                                                            {{ $equip->numero_de_serie }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                         
-                                                <div class="mb-3">
-                                                    <label for="equipement">Équipement :</label>
-                                                    <select name="numero_de_serie" id="equipment" class="form-control" required>
-                                                        <option value="">-- Sélectionner un équipement --</option>
-                                                        @foreach($equipments as $equip)
-                                                            <option value="{{ $equip->numero_de_serie }}" {{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>
-                                                                {{ $equip->numero_de_serie }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label for="employee">Employé :</label>
+                                                <select name="employees_id" id="employee" class="form-control" required>
+                                                    <option value="">-- Sélectionner un employé --</option>
+                                                    @foreach($employees as $employee)
+                                                        <option value="{{ $employee->matricule }}" {{ $assignment->employees_id == $employee->matricule ? 'selected' : '' }}>
+                                                            {{ $employee->nom }} {{ $employee->prenom }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                         
-                                                <div class="mb-3">
-                                                    <label for="employee">Employé :</label>
-                                                    <select name="employees_id" id="employee" class="form-control" required>
-                                                        <option value="">-- Sélectionner un employé --</option>
-                                                        @foreach($employees as $employee)
-                                                            <option value="{{ $employee->matricule }}" {{ $assignment->employees_id == $employee->matricule ? 'selected' : '' }}>
-                                                                {{ $employee->nom }} {{ $employee->prenom }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label for="start_date">Date de début :</label>
+                                                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date', $assignment->start_date ?? '') }}" required>
+                                            </div>
                         
-                                                <div class="mb-3">
-                                                    <label for="start_date">Date de début :</label>
-                                                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date', $assignment->start_date ?? '') }}" required>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label for="end_date">Date de fin :</label>
+                                                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $assignment->end_date ?? '') }}">
+                                                <small class="text-muted">Laissez vide si l'affectation est toujours en cours.</small>
+                                            </div>
                         
-                                                <div class="mb-3">
-                                                    <label for="end_date">Date de fin :</label>
-                                                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $assignment->end_date ?? '') }}">
-                                                    <small class="text-muted">Laissez vide si l'affectation est toujours en cours.</small>
-                                                </div>
-                        
-                                                <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                                                <a href="{{ route('assignments.index') }}" class="btn btn-secondary">Annuler</a>
-                                            </form>
-                                        </div>
+                                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                                            <a href="{{ route('assignments.index') }}" class="btn btn-secondary">Annuler</a>
+                                        </form>
                                     </div>
                                 </div>
-                            </div>                        
+                            </div>
+                        </div>                        
 
-                            <form action="{{ route('assignments.destroy', $assignment->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                            </form>
+                        <form action="{{ route('assignments.destroy', $assignment->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        </form>
 
-                           <!-- Bouton pour afficher le modal -->
-                                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#historyAssignmentModal{{ $assignment->id }}">
-                                     <i class="fas fa-history"></i>
-                                     </button>
-                                     
-                                <!-- Modal Structure -->
-                                <div class="modal fade" id="historyAssignmentModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="historyAssignmentModalLabel{{ $assignment->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="historyAssignmentModalLabel{{ $assignment->id }}">
-                                <i class="fas fa-box me-2"></i>Historique des Affectations pour l'Équipement : {{ $equipment->numero_de_serie }}
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                            <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Employé</th>
-                                            <th>Date de Début</th>
-                                            <th>Date de Fin</th>
-                                        </tr>
-                                    </thead>
-                        <tbody>
-                            @foreach($assignment->equipment->assignments as $history)
-                                <tr>
-                                    <td>
-                                        @if ($history->employee)
-                                          {{ $history->employee->nom }} {{ $history->employee->prenom }}
-                                        @else
-                                           <span class="text-danger">Employé inconnu</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $history->start_date }}</td>
-                                    <td>{{ $history->end_date ?? 'En cours' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                           </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                    </td>
-        
-    </tr>
+                        <a href="{{ route('assignments.history', $assignment->equipment->numero_de_serie) }}" class="btn btn-info"><i class="fas fa-history"></i></a> <!-- Corrected history link -->
+                  
 
+               
+            </td>
+        </tr>
             @endforeach
-           
         </tbody>
     </table>
-</div>
 </div>
 
 {{-- Success Message --}}
 @if(session('success'))
-    <div class="alert alert-success" id="success-message" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 50%; text-align: center; padding: 10px; border-radius: 5px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+    <div class="alert alert-success" id="success-message" style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        width: 50%;
+        text-align: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    ">
         {{ session('success') }}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fade out success message after error message disappears
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            
+            if (errorMessage) {
+                setTimeout(() => {
+                    errorMessage.style.transition = "opacity 0.5s";
+                    errorMessage.style.opacity = "0";
+                    setTimeout(() => {
+                        errorMessage.remove();
+                        if (successMessage) {
+                            successMessage.style.transition = "opacity 0.5s";
+                            successMessage.style.opacity = "1";
+                            setTimeout(() => successMessage.remove(), 5000); // Remove after 5 seconds
+                        }
+                    }, 500);
+                }, 3000); // Wait for 3 seconds before hiding the error message
+            }
+            else {
+                // If no error message, show success directly
+                if (successMessage) {
+                    setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
+                }
+            }
+        });
+    </script>
 @endif
 
 {{-- Error Messages --}}
@@ -230,29 +229,6 @@
         </ul>
     </div>
 @endif
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Success message
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
-        }
-
-        // Error message
-        const errorMessage = document.getElementById('error-message');
-        if (errorMessage) {
-            setTimeout(() => {
-                errorMessage.style.transition = "opacity 0.5s";
-                errorMessage.style.opacity = "0";
-                setTimeout(() => {
-                    errorMessage.remove();
-                }, 500); // Remove after fade-out animation
-            }, 3000); // Wait for 3 seconds before starting to hide the error message
-        }
-    });
-</script>
-
 @include('layouts.sidebar')
 
 @endsection
