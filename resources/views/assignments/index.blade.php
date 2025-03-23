@@ -2,171 +2,327 @@
 
 @section('content')
 
-<div class="container">
-    <div class="search-container">
-        <form method="GET" action="{{ route('assignments.index') }}" class="search-form">
-            <input type="text" name="search" id="search" placeholder="Rechercher par Article, Quantité, etc..." value="{{ request()->search }}">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        
-            <!-- Reset Filter Button -->
-            <a href="{{ route('assignments.index') }}" class="reset-filter-btn" title="Réinitialiser la recherche">
-                <i class="fas fa-sync-alt"></i> 
-            </a>
-        </form>
-    </div>
-
-    <div class="d-flex justify-content-end mb-3">
-        <a href="#" 
-            class="btn btn-white me-2" 
-            data-bs-toggle="modal" 
-            data-bs-target="#addAssignmentModal"
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Ajouter une nouvelle affectation">
-            <i class="fas fa-plus me-2"></i> 
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <div class="search-container w-50">
+            <form method="GET" action="{{ route('assignments.search') }}" class="search-form">
+                <div class="input-group">
+                    <input type="text" name="search" id="search" class="form-control shadow-sm" placeholder="Rechercher par numéro de série, Employé, etc...">
+                    <button type="submit" class="btn btn-outline-secondary shadow-sm"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <!-- Reset Filter Button -->
+        <a href="{{ route('assignments.index') }}" class="btn btn-outline-danger shadow-sm ms-2" title="Réinitialiser la recherche">
+            <i class="fas fa-sync-alt"></i>
         </a>
     </div>
 
-    <!-- Modal Structure -->
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end mb-4">
+        <button class="btn btn-outline-primary shadow-sm" 
+                data-bs-toggle="modal" 
+                data-bs-target="#addAssignmentModal"
+                title="Ajouter une nouvelle affectation">
+            <i class="fas fa-plus me-2"></i> Ajouter Affectation
+        </button>
+    </div>
+
+    <!-- Add Assignment Modal -->
     <div class="modal fade" id="addAssignmentModal" tabindex="-1" aria-labelledby="addAssignmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addAssignmentModalLabel">
-                        <i class="fas fa-box me-2"></i>Ajouter un affectation
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+                <div class="modal-header bg-primary text-white rounded-top">
+                    <h5 class="modal-title fw-bold" id="addAssignmentModalLabel">
+                        <i class="fas fa-box me-2"></i> Ajouter une affectation
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('assignments.store') }}">
-                        @csrf
+                <form method="POST" action="{{ route('assignments.store') }}">
+                    @csrf
+                    <div class="modal-body">
                         <div class="mb-3">
-                            <label for="numero_de_serie">Équipement :</label>
-                            <select name="numero_de_serie" id="numero_de_serie" class="form-control" required>
-                                <option value="">-- Sélectionner un équipement --</option>
+                            <label for="numero_de_serie" class="fw-semibold">Équipement :</label>
+                            <select name="numero_de_serie" id="numero_de_serie" class="form-control rounded-3 shadow-sm" required>
+                                <option value="" selected disabled>-- Sélectionner un équipement --</option>
                                 @foreach($equipments as $equipment)
-                                    <option value="{{ $equipment->numero_de_serie }}">{{ $equipment->numero_de_serie }}</option>
+                                    <option value="{{ $equipment->numero_de_serie }}" data-statut="{{ $equipment->statut }}">{{ $equipment->numero_de_serie }}</option>
                                 @endforeach
                             </select>
+                            <div id="alert-message" class="mt-2 text-danger fw-bold" style="display: none;">
+                                Attention: Vous ne pouvez pas affecter cet équipement car il est en panne.
+                            </div>
                         </div>
-            
+
                         <div class="mb-3">
-                            <label for="employees_id">Employee</label>
-                            <select name="employees_id" id="employees_id" class="form-control" required>
-                                <option value="">--Sélectionner Employee--</option>
-                                @foreach ($employees as $employee)
+                            <label for="employees_id" class="fw-semibold">Employé :</label>
+                            <select name="employees_id" id="employees_id" class="form-control rounded-3 shadow-sm" required>
+                                <option value="" selected disabled>-- Sélectionner un employé --</option>
+                                @foreach($employees as $employee)
                                     <option value="{{ $employee->matricule }}">{{ $employee->nom }} {{ $employee->prenom }}</option>
                                 @endforeach
                             </select>
                         </div>
-            
+
                         <div class="mb-3">
-                            <label for="start_date">Date de début :</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date') }}" required>
+                            <label for="date_debut" class="fw-semibold">Date de début :</label>
+                            <input type="date" name="date_debut" id="date_debut" class="form-control rounded-3 shadow-sm" value="{{ old('date_debut') }}" required>
                         </div>
-            
-                        <button type="submit" class="btn btn-success">Affecter</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">
+                        <button type="button" class="btn btn-outline-secondary px-4 rounded-3 shadow-sm" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i> Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>Équipement</th>
-                <th>Employé</th>
-                <th>Date Début</th>
-                <th>Date Fin</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($assignments as $assignment)
-                <tr>
-                    <td>{{ $assignment->equipment->numero_de_serie ?? 'N/A' }}</td>
-                    <td>{{ $assignment->employee->nom ?? 'N/A' }} {{ $assignment->employee->prenom ?? 'N/A' }}</td>
-                    <td>{{ $assignment->start_date }}</td>
-                    <td>{{ $assignment->end_date ?? 'En cours' }}</td>
-                    <td>
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
-                            <i class="fas fa-edit"></i>
-                        </button>   
-                         
-                        <!-- Modal Structure -->
-                        <div class="modal fade" id="editAssignmentModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="editAssignmentModalLabel{{ $assignment->id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="editAssignmentModalLabel{{ $assignment->id }}">
-                                            <i class="fas fa-box me-2"></i>Modifier l'affectation
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Assignments Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">
+                            <i class="fas fa-laptop"></i> Équipement
+                        </th>
+                        
+                        <th  class="text-center">
+                            <i class="fas fa-users"></i> Employé
+                        </th>
+                        <th  class="text-center">
+                            <i class="fas fa-calendar-alt"></i> Date Début
+                        </th>
+                        <th  class="text-center">
+                            <i class="fas fa-calendar-check"></i> Date Fin
+                        </th>
+                        <th  class="text-center">
+                            <i class="fas fa-cogs"></i> Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($assignments->isEmpty())
+                        <tr>
+                            <td colspan="5" class="text-center">Aucune affectation trouvée.</td>
+                        </tr>
+                    @else
+                        @foreach($assignments as $assignment)
+                            <tr>
+                                <td class="text-center">{{ $assignment->equipment->numero_de_serie ?? 'N/A' }}</td>
+                                <td class="text-center">{{ $assignment->employee->nom ?? 'N/A' }} {{ $assignment->employee->prenom ?? 'N/A' }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($assignment->date_debut)->format('d-m-Y') }}</td>
+                                <td class="text-center">{{ $assignment->date_fin ? \Carbon\Carbon::parse($assignment->date_fin)->format('d-m-Y') : 'En cours' }}</td>
+                                <td class="d-flex justify-content-center justify-content-between ">
+                                    <!-- Edit Button -->
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <!-- Edit Assignment Modal -->
+                                    <div class="modal fade" id="editAssignmentModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="editAssignmentModalLabel{{ $assignment->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+                                                <div class="modal-header bg-primary text-white rounded-top">
+                                                    <h5 class="modal-title fw-bold" id="editAssignmentModalLabel{{ $assignment->id }}">
+                                                        <i class="fas fa-box me-2"></i> Modifier l'affectation
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form method="POST" action="{{ route('assignments.update', $assignment->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="equipement" class="fw-semibold">Équipement :</label>
+                                                            <select name="numero_de_serie" id="equipment" class="form-control rounded-3 shadow-sm" required>
+                                                                <option value="" selected disabled>-- Sélectionner un équipement --</option>
+                                                                @foreach($equipments as $equip)
+                                                                    <option value="{{ $equip->numero_de_serie }}" {{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>
+                                                                        {{ $equip->numero_de_serie }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="employee" class="fw-semibold">Employé :</label>
+                                                            <select name="employees_id" id="employee" class="form-control rounded-3 shadow-sm" required>
+                                                                <option value="" selected disabled>-- Sélectionner un employé --</option>
+                                                                @foreach($employees as $employee)
+                                                                    <option value="{{ $employee->matricule }}" {{ $assignment->employees_id == $employee->matricule ? 'selected' : '' }}>
+                                                                        {{ $employee->nom }} {{ $employee->prenom }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="date_debut" class="fw-semibold">Date de début :</label>
+                                                            <input type="date" name="date_debut" id="date_debut" class="form-control rounded-3 shadow-sm" value="{{ old('date_debut', $assignment->date_debut ?? '') }}" required>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="date_fin" class="fw-semibold">Date de fin :</label>
+                                                            <input type="date" name="date_fin" id="date_fin" class="form-control rounded-3 shadow-sm" value="{{ old('date_fin', $assignment->date_fin ?? '') }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">
+                                                        <button type="button" class="btn btn-outline-secondary px-4 rounded-3 shadow-sm" data-bs-dismiss="modal">
+                                                            <i class="fas fa-times me-2"></i> Annuler
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                                                            <i class="fas fa-save me-2"></i> Modifier
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-body">
-                                        <form method="POST" action="{{ route('assignments.update', $assignment->id) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            
-                                            <div class="mb-3">
-                                                <label for="equipement">Équipement :</label>
-                                                <select name="numero_de_serie" id="equipment" class="form-control" required>
-                                                    <option value="">-- Sélectionner un équipement --</option>
-                                                    @foreach($equipments as $equip)
-                                                        <option value="{{ $equip->numero_de_serie }}" {{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>
-                                                            {{ $equip->numero_de_serie }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                        
-                                            <div class="mb-3">
-                                                <label for="employee">Employé :</label>
-                                                <select name="employees_id" id="employee" class="form-control" required>
-                                                    <option value="">-- Sélectionner un employé --</option>
-                                                    @foreach($employees as $employee)
-                                                        <option value="{{ $employee->matricule }}" {{ $assignment->employees_id == $employee->matricule ? 'selected' : '' }}>
-                                                            {{ $employee->nom }} {{ $employee->prenom }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                        
-                                            <div class="mb-3">
-                                                <label for="start_date">Date de début :</label>
-                                                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ old('start_date', $assignment->start_date ?? '') }}" required>
-                                            </div>
-                        
-                                            <div class="mb-3">
-                                                <label for="end_date">Date de fin :</label>
-                                                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', $assignment->end_date ?? '') }}">
-                                                <small class="text-muted">Laissez vide si l'affectation est toujours en cours.</small>
-                                            </div>
-                        
-                                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                                            <a href="{{ route('assignments.index') }}" class="btn btn-secondary">Annuler</a>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>                        
+                                    
 
-                        <form action="{{ route('assignments.destroy', $assignment->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                        </form>
+                                    <!-- Delete Button -->
+                                    <form action="{{ route('assignments.destroy', $assignment->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette affectation ?');">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
 
-                        <a href="{{ route('assignments.history', $assignment->equipment->numero_de_serie) }}" class="btn btn-info"><i class="fas fa-history"></i></a> <!-- Corrected history link -->
-                  
+                                    <!-- History Button -->
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#historyModal{{ $assignment->equipment->numero_de_serie }}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    @foreach ($assignments as $assignment)
+    <!-- Modal -->
+    <div class="modal fade" id="historyModal{{ $assignment->equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="historyModalLabel">
+                        <i class="fas fa-history me-2"></i> Historique des Affectations
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Équipement : <span class="fw-bold">{{ $assignment->equipment->numero_de_serie }}</span></p>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-primary text-center">
+                                <tr>
+                                    <th><i class="fas fa-user"></i> Employé</th>
+                                    <th><i class="fas fa-calendar-alt"></i> Date de Début</th>
+                                    <th><i class="fas fa-calendar-check"></i> Date de Fin</th>
+                                    <th><i class="fas fa-trash-alt"></i> Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($assignment->equipment->assignments as $history)
+                                    <tr>
+                                        <td class="text-center">
+                                            @if ($history->employee)
+                                                <span class="fw-semibold">{{ $history->employee->nom }} {{ $history->employee->prenom }}</span>
+                                            @else
+                                                <span class="text-warning">Employé inconnu</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ \Carbon\Carbon::parse($history->date_debut)->format('d-m-Y') }}</td>
+                                        <td class="text-center">
+                                            @if ($history->date_fin)
+                                                <span class="badge bg-success">{{ \Carbon\Carbon::parse($history->date_fin)->format('d-m-Y') }}</span>
+                                            @else
+                                                <span class="badge bg-warning text-dark">En cours</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <form action="{{ route('assignments.softDelete', $history->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Confirmer la suppression ?')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <i class="fas fa-exclamation-circle me-2"></i> Aucune affectation trouvée.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-               
-            </td>
-        </tr>
-            @endforeach
-        </tbody>
-    </table>
+                    <!-- Section for Soft Deleted Assignments -->
+                    <hr>
+                    <h5 class="text-danger text-center"><i class="fas fa-undo-alt"></i> Affectations Supprimées</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-danger">
+                                <tr>
+                                    <th class="text-center">Employé</th>
+                                    <th class="text-center">Date de Début</th>
+                                    <th class="text-center">Date de Fin</th>
+                                    <th class="text-center">Restaurer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($assignment->equipment->assignments()->onlyTrashed()->get() as $deleted)
+                                    <tr>
+                                        <td class="text-center">{{ $deleted->employee->nom ?? 'Employé inconnu' }}</td>
+                                        <td class="text-center">{{ \Carbon\Carbon::parse($deleted->date_debut)->format('d-m-Y') }}</td>
+                                        <td class="text-center">{{ $deleted->date_fin ? \Carbon\Carbon::parse($deleted->date_fin)->format('d-m-Y') : 'En cours' }}</td>
+                                        <td class="text-center">
+                                            <form action="{{ route('assignments.restore', $deleted->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-undo-alt"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Aucune affectation supprimée.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
+
+                                    
+                                    
+
+                                    
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 {{-- Success Message --}}
@@ -191,29 +347,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Fade out success message after error message disappears
-            const errorMessage = document.getElementById('error-message');
             const successMessage = document.getElementById('success-message');
-            
-            if (errorMessage) {
+            if (successMessage) {
                 setTimeout(() => {
-                    errorMessage.style.transition = "opacity 0.5s";
-                    errorMessage.style.opacity = "0";
-                    setTimeout(() => {
-                        errorMessage.remove();
-                        if (successMessage) {
-                            successMessage.style.transition = "opacity 0.5s";
-                            successMessage.style.opacity = "1";
-                            setTimeout(() => successMessage.remove(), 5000); // Remove after 5 seconds
-                        }
-                    }, 500);
-                }, 3000); // Wait for 3 seconds before hiding the error message
-            }
-            else {
-                // If no error message, show success directly
-                if (successMessage) {
-                    setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
-                }
+                    successMessage.style.transition = "opacity 0.5s";
+                    successMessage.style.opacity = "0";
+                    setTimeout(() => successMessage.remove(), 500);
+                }, 5000); // Remove after 5 seconds
             }
         });
     </script>
@@ -228,7 +368,40 @@
             @endforeach
         </ul>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                setTimeout(() => {
+                    errorMessage.style.transition = "opacity 0.5s";
+                    errorMessage.style.opacity = "0";
+                    setTimeout(() => errorMessage.remove(), 500);
+                }, 5000); // Remove after 5 seconds
+            }
+        });
+    </script>
 @endif
+
+{{-- Equipement Select JS --}}
+<script>
+    $(document).ready(function() {
+        $('#numero_de_serie').change(function() {
+            var selectedOption = $(this).find('option:selected');
+            var statut = selectedOption.data('statut'); // Get the 'statut' attribute of the selected equipment
+
+            // If the statut is 'En panne', show the warning message
+            if (statut === 'En panne') {
+                $('#alert-message').show(); // Display the alert message
+                $('#assign-button').prop('disabled', true); // Disable the assign button to prevent assignment
+            } else {
+                $('#alert-message').hide(); // Hide the alert message
+                $('#assign-button').prop('disabled', false); // Enable the assign button
+            }
+        });
+    });
+</script>
+
 @include('layouts.sidebar')
 
 @endsection

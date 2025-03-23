@@ -23,7 +23,6 @@ class EquipmentController extends Controller
     $request->validate([
         'numero_de_serie' => 'required|string|max:255|unique:equipements,numero_de_serie',
         'article' => 'required|string|max:255',
-        'quantite' => 'required|integer|min:1',
         'date_acquisition' => 'required|date',
         'date_de_mise_en_oeuvre' => 'nullable|date',
         'categorie' => 'nullable|string|max:255',
@@ -77,7 +76,6 @@ public function import(Request $request)
         $validatedData = $request->validate([
             'numero_de_serie' => 'required|string|unique:equipements,numero_de_serie,' . $equipment->numero_de_serie . ',numero_de_serie',
             'article' => 'nullable|string|max:255',
-            'quantite' => 'nullable|integer|min:1',
             'date_acquisition' => 'nullable|date',
             'date_de_mise_en_oeuvre' => 'nullable|date',
             'categorie' => 'nullable|string|max:255',
@@ -125,10 +123,7 @@ public function import(Request $request)
             $query->where('article', 'like', '%' . $request->article . '%');
         }
 
-        // Filter by Quantité
-        if ($request->filled('quantite')) {
-            $query->where('quantite', $request->quantite);
-        }
+
 
         // Filter by Date d'Acquisition
         if ($request->filled('date_acquisition')) {
@@ -162,6 +157,7 @@ public function import(Request $request)
         // Get categories for the dropdown (if needed)
         $categories = Category::all();
 
-        return view('equipments.search', compact('equipments', 'categories', 'noResults'));
+        return view('equipments.index', compact('equipments', 'categories', 'noResults'));
     }
+    
 }

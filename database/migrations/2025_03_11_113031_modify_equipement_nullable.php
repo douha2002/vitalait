@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('equipements', function (Blueprint $table) {
             $table->string('article')->nullable()->change();
-            $table->integer('quantite')->nullable()->change();
             $table->date('date_acquisition')->nullable()->change();
             $table->date('date_de_mise_en_oeuvre')->nullable()->change();
             $table->string('categorie')->nullable()->change();
@@ -29,7 +28,6 @@ return new class extends Migration
     {
         Schema::table('equipements', function (Blueprint $table) {
             $table->string('article')->nullable(false)->change();
-            $table->integer('quantite')->nullable(false)->change();
             $table->date('date_acquisition')->nullable(false)->change();
             $table->date('date_de_mise_en_oeuvre')->nullable(false)->change();
             $table->string('categorie')->nullable(false)->change();

@@ -26,7 +26,6 @@ class EquipementsImport implements ToModel, WithHeadingRow
         Equipement::create([
             'numero_de_serie' => trim($row['numero_de_serie']),
             'article' => trim($row['article'] ?? ''),
-            'quantite' => $row['quantite'] ?? 0,
             'date_acquisition' => $this->convertExcelDate($row['date_acquisition'] ?? null),
             'date_de_mise_en_oeuvre' => $this->convertExcelDate($row['date_de_mise_en_oeuvre'] ?? null),
             'categorie' => trim($row['categorie'] ?? ''),

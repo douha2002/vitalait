@@ -101,8 +101,8 @@
                     </a>
                 </li>
                 <li class="mb-3">
-                    <a href="#" class="text-white text-decoration-none">
-                        <i class="fas fa-wrench me-2"></i> Maintenance
+                    <a href="{{ route('maintenances.index') }}" class="text-white text-decoration-none">
+                        <i class="fas fa-wrench me-2"></i> Maintenances
                     </a>
                 </li>
                 <li class="mb-3">

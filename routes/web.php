@@ -10,6 +10,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AssignmentController;
 use App\Models\Assignment;
+use App\Http\Controllers\MaintenanceController;
+
 
 
 Route::get('/', function () {
@@ -50,13 +52,25 @@ Route::middleware(['auth'])->group(function () {
 
 });
 Route::middleware(['auth'])->group(function () {
+    Route::get('/assignments/search', [AssignmentController::class, 'search'])->name('assignments.search');
     Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
     Route::get('/assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
     Route::post('/assignments/store', [AssignmentController::class, 'store'])->name('assignments.store');
     Route::get('/assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
     Route::put('/assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
     Route::delete('/assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
-    Route::get('/equipments/{numero_de_serie}/history', [AssignmentController::class, 'showHistory'])->name('assignments.history');
+    Route::delete('/assignments/{id}/soft-delete', [AssignmentController::class, 'softDelete'])->name('assignments.softDelete');
+    Route::patch('/assignments/{id}/restore', [AssignmentController::class, 'restore'])->name('assignments.restore');
+    });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/maintenances/search', [MaintenanceController::class, 'search'])->name('maintenances.search');
+    Route::get('/maintenances', [MaintenanceController::class, 'index'])->name('maintenances.index');
+    Route::get('/maintenances/create', [MaintenanceController::class, 'create'])->name('maintenances.create');
+    Route::post('/maintenances', [MaintenanceController::class, 'store'])->name('maintenances.store');
+    Route::get('/maintenances/{id}/edit', [MaintenanceController::class, 'edit'])->name('maintenances.edit');
+    Route::put('/maintenances/{id}', [MaintenanceController::class, 'update'])->name('maintenances.update');
+
 });
 
 

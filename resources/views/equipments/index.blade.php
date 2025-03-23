@@ -1,331 +1,225 @@
 @extends('layouts.app')
 
-@section('content') 
+@section('content')
 
-
-<div class="container">
-    <div class="search-container">
-        <form method="GET" action="{{ route('search') }}" class="search-form">
-            <input type="text" name="search" id="search" placeholder="Rechercher par Article,Quantité etc.." >
-            <button type="submit"><i class="fas fa-search"></i></button>
-       
-        
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <div class="search-container w-50">
+            <form method="GET" action="{{ route('search') }}" class="search-form">
+                <div class="input-group">
+                    <input type="text" name="search" id="search" class="form-control shadow-sm" placeholder="Rechercher par Article, Quantité, etc..">
+                    <button type="submit" class="btn btn-outline-secondary shadow-sm"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
         <!-- Reset Filter Button -->
-        <a href="{{ route('equipments.index') }}" class="reset-filter-btn" title="Réinitialiser la recherche">
+        <a href="{{ route('equipments.index') }}" class="btn btn-outline-danger shadow-sm" title="Réinitialiser la recherche">
             <i class="fas fa-sync-alt"></i> 
         </a>
-    </form>
     </div>
-    
-<div class="d-flex justify-content-end mb-3">
 
-    <!-- Importer button with Font Awesome Icon -->
-<button class="btn btn-white" 
-data-bs-toggle="modal" 
-data-bs-target="#importModal"
-data-bs-toggle="tooltip" 
-data-bs-placement="top" 
-title="Importer un fichier CSV">
-<i class="fas fa-upload me-2"></i> 
-</button>
-<!-- In your Blade view (equipments.index.blade.php) -->
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end mb-4">
+        <button class="btn btn-outline-success me-2 shadow-sm" 
+                data-bs-toggle="modal" 
+                data-bs-target="#importModal"
+                title="Importer un fichier CSV">
+            <i class="fas fa-upload me-2"></i>Importer CSV
+        </button>
 
-
-<!-- Import Form in Modal -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="importModalLabel">Importer un fichier CSV</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="{{ route('equipments.import') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label>Choisir un fichier CSV</label>
-                    <input type="file" name="file" class="form-control" required>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-upload me-2"></i>Importer
-                </button>
-            </div>
-        </form>
+        <button class="btn btn-outline-primary shadow-sm" 
+                data-bs-toggle="modal" 
+                data-bs-target="#addEquipmentModal"
+                title="Ajouter un nouvel équipement">
+            <i class="fas fa-plus me-2"></i> Ajouter Équipement
+        </button>
     </div>
-</div>
-</div>
 
-<a href="" 
-class="btn btn-white me-2" 
-data-bs-toggle="modal" 
-data-bs-target="#addEquipmentModal"
-data-bs-toggle="tooltip" 
-data-bs-placement="top" 
-title="Ajouter un nouvel équipement">
-<i class="fas fa-plus me-2"></i> 
-</a>
-
-    <!-- Modal Structure -->
-    <div class="modal fade" id="addEquipmentModal" tabindex="-1" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addEquipmentModalLabel">
-                        <i class="fas fa-box me-2"></i>Ajouter un équipement
+                <div class="modal-content shadow-lg">
+ <!-- Modal Header -->
+ <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title" id="importModalLabel">
+        <i class="fas fa-file-csv me-2"></i> <!-- Add an icon for better visual appeal -->
+        Importer un fichier CSV
+    </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+                    <form action="{{ route('equipments.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="file">Choisir un fichier CSV</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Importer
+
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Add Equipment Modal -->
+    <div class="modal fade" id="addEquipmentModal" tabindex="-1" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+                <div class="modal-header bg-primary text-white rounded-top">
+                    <h5 class="modal-title fw-bold" id="addEquipmentModalLabel">
+                        <i class="fas fa-box me-2"></i> Ajouter un équipement
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form action="{{ route('equipments.store') }}" method="POST" novalidate>
-                        @csrf
+                <form action="{{ route('equipments.store') }}" method="POST" novalidate>
+                    @csrf
+                    <div class="modal-body">
                         <div class="row">
+                            @foreach (['numero_de_serie' => 'Numéro de Série', 'article' => 'Article', 'date_acquisition' => 'Date d\'Acquisition', 'date_de_mise_en_oeuvre' => 'Date de Mise en Oeuvre', 'categorie' => 'Catégorie', 'sous_categorie' => 'Sous Catégorie', 'matricule' => 'Matricule'] as $field => $label)
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ $field }}" class="fw-semibold">{{ $label }}</label>
+                                    <input type="{{ $field === 'date_acquisition' || $field === 'date_de_mise_en_oeuvre' ? 'date' : 'text' }}" 
+                                           name="{{ $field }}" 
+                                           id="{{ $field }}" 
+                                           class="form-control rounded-3 shadow-sm @error($field) is-invalid @enderror" 
+                                           value="{{ old($field) }}" 
+                                           required>
+                                    @error($field)
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">
+                        <button type="button" class="btn btn-outline-secondary px-4 rounded-3 shadow-sm" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i> Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        
 
-                            <!-- Numéro de Série -->
+    <!-- Equipment Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">Numéro de Série</th>
+                        <th class="text-center">Article</th>
+                        <th class="text-center">Date d'Acquisition</th>
+                        <th class="text-center">Date de Mise en Oeuvre</th>
+                        <th class="text-center">Catégorie</th>
+                        <th class="text-center">Sous Catégorie</th>
+                        <th class="text-center">Matricule</th>
+                        <th class="text-center"><i class="bi bi-shield-lock"></i> Statut</th>
+                        <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($equipments as $equipment)
+                        <tr>
+                            <td class="text-center">{{ $equipment->numero_de_serie }}</td>
+                            <td class="text-center">{{ $equipment->article ?: '-' }}</td>
+                            <td class="text-center">{{ $equipment->date_acquisition ? \Carbon\Carbon::parse($equipment->date_acquisition)->format('d-m-Y') : '-' }}</td>
+                            <td class="text-center">{{ $equipment->date_de_mise_en_oeuvre ? \Carbon\Carbon::parse($equipment->date_de_mise_en_oeuvre)->format('d-m-Y') : '-' }}</td>
+                            <td class="text-center">{{ $equipment->categorie ?: '-' }}</td>
+                            <td class="text-center">{{ $equipment->sous_categorie ?: '-' }}</td>
+                            <td class="text-center">{{ $equipment->matricule ?: '-' }}</td>
+                            <td class="text-center">
+                                @if ($equipment->statut === 'Disponible')
+                                    <span class="badge bg-warning text-dark"><i class="fas fa-thumbs-up"></i> {{ __('Disponible') }}</span>
+                                @elseif ($equipment->statut === 'Affecté')
+                                    <span class="badge bg-success"><i class="bi bi-check-lg"></i> {{ __('Affecté') }}</span>
+                                @elseif ($equipment->statut === 'En panne')
+                                    <span class="badge bg-danger"><i class="bi bi-exclamation-circle"></i> {{ __('En panne') }}</span>
+                                @endif
+                            </td>                            
+                            <td class="d-flex justify-content-center justify-content-between ">
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
+    <i class="fas fa-edit"></i>
+</button>
+
+<!-- Edit Equipment Modal -->
+<div class="modal fade" id="editEquipmentModal{{ $equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="editEquipmentModalLabel{{ $equipment->numero_de_serie }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+            <div class="modal-header bg-primary text-white rounded-top">
+                <h5 class="modal-title fw-bold" id="editEquipmentModalLabel{{ $equipment->numero_de_serie }}">
+                    <i class="fas fa-box me-2"></i> Modifier un équipement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Form Start -->
+            <form action="{{ route('equipments.update', $equipment->numero_de_serie) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-body">
+                    <div class="row">
+                        @foreach (['numero_de_serie' => 'Numéro de Série', 'article' => 'Article', 'date_acquisition' => 'Date d\'Acquisition', 'date_de_mise_en_oeuvre' => 'Date de Mise en Oeuvre', 'categorie' => 'Catégorie', 'sous_categorie' => 'Sous Catégorie', 'matricule' => 'Matricule'] as $field => $label)
                             <div class="col-md-6 mb-3">
-                                <label for="numero_de_serie">Numéro de Série</label>
-                                <input type="text" name="numero_de_serie" id="numero_de_serie" class="form-control @error('numero_de_serie') is-invalid @enderror" value="{{ old('numero_de_serie') }}" required>
-                                @error('numero_de_serie')
+                                <label for="{{ $field }}" class="fw-semibold">{{ $label }}</label>
+                                <input type="{{ in_array($field, ['date_acquisition', 'date_de_mise_en_oeuvre']) ? 'date' : 'text' }}" 
+                                       name="{{ $field }}" 
+                                       id="{{ $field.$equipment->numero_de_serie }}" 
+                                       class="form-control rounded-3 shadow-sm @error($field) is-invalid @enderror" 
+                                       value="{{ old($field, $equipment->$field) }}" 
+                                       required>
+                                @error($field)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <!-- Article -->
-                            <div class="col-md-6 mb-3">
-                                <label for="article">Article</label>
-                                <input type="text" name="article" id="article" class="form-control @error('article') is-invalid @enderror" value="{{ old('article') }}">
-                                @error('article')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Quantité -->
-                            <div class="col-md-6 mb-3">
-                                <label for="quantite">Quantité</label>
-                                <input type="number" name="quantite" id="quantite" class="form-control @error('quantite') is-invalid @enderror" value="{{ old('quantite') }}">
-                                @error('quantite')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Date d'Acquisition -->
-                            <div class="col-md-6 mb-3">
-                                <label for="date_acquisition">Date d'Acquisition</label>
-                                <input type="date" name="date_acquisition" id="date_acquisition" class="form-control @error('date_acquisition') is-invalid @enderror" value="{{ old('date_acquisition') }}">
-                                @error('date_acquisition')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Date de Mise en Oeuvre -->
-                            <div class="col-md-6 mb-3">
-                                <label for="date_de_mise_en_oeuvre">Date de Mise en Oeuvre</label>
-                                <input type="date" name="date_de_mise_en_oeuvre" id="date_de_mise_en_oeuvre" class="form-control @error('date_de_mise_en_oeuvre') is-invalid @enderror" value="{{ old('date_de_mise_en_oeuvre') }}">
-                                @error('date_de_mise_en_oeuvre')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Catégorie -->
-                            <div class="col-md-6 mb-3">
-                                <label for="categorie">Catégorie</label>
-                                <input type="text" name="categorie" id="categorie" class="form-control @error('categorie') is-invalid @enderror" value="{{ old('categorie') }}">
-                                @error('categorie')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Sous Catégorie -->
-                            <div class="col-md-6 mb-3">
-                                <label for="sous_categorie">Sous Catégorie</label>
-                                <input type="text" name="sous_categorie" id="sous_categorie" class="form-control @error('sous_categorie') is-invalid @enderror" value="{{ old('sous_categorie') }}">
-                                @error('sous_categorie')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Matricule -->
-                            <div class="col-md-6 mb-3">
-                                <label for="matricule">Matricule</label>
-                                <input type="text" name="matricule" id="matricule" class="form-control @error('matricule') is-invalid @enderror" value="{{ old('matricule') }}">
-                                @error('matricule')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Submit Button -->
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Ajouter</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            </div>
-                        </form>
+                        @endforeach
                     </div>
                 </div>
-            </div>
+
+                <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">
+                    <button type="button" class="btn btn-outline-secondary px-4 rounded-3 shadow-sm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                        <i class="fas fa-edit me-2"></i> Modifier
+                    </button>
+                </div>
+            </form> <!-- Form End -->
         </div>
     </div>
 </div>
 
-   
-
-    <!-- Equipment Table -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Numéro de Série</th>
-                <th>Article</th>
-                <th>Quantité</th>
-                <th>Date d'Acquisition</th>
-                <th>Date de Mise en Oeuvre</th>
-                <th>Catégorie</th>
-                <th>Sous Catégorie</th>
-                <th>Matricule</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            @if($equipments->isEmpty())
-            <tr>
-                <td colspan="9" class="text-center">Aucun équipement trouvé correspondant à votre recherche.</td>
-            </tr>
-            @else
-
-            @foreach($equipments as $equipment)
-                <tr>
-                    <td>{{ $equipment->numero_de_serie }}</td>
-                    <td>{{ $equipment->article ?? '-' }}</td>
-                    <td>{{ $equipment->quantite ?? '-' }}</td>
-                    <td>{{ $equipment->date_acquisition ?? '-' }}</td>
-                    <td>{{ $equipment->date_de_mise_en_oeuvre ?? '-' }}</td>
-                    <td>{{ $equipment->categorie ?? '-' }}</td>
-                    <td>{{ $equipment->sous_categorie ?? '-' }}</td>
-                    <td>{{ $equipment->matricule ?? '-' }}</td>
-                    <td>{{ $equipment->statut ?? '-' }}</td>
-                    
-                    <td>
-                        <!-- Modifier button with icon -->
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    
-                        <!-- Modal Structure -->
-                        <div class="modal fade" id="editEquipmentModal{{ $equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="editEquipmentModalLabel{{ $equipment->numero_de_serie }}" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="editEquipmentModalLabel">
-                                            <i class="fas fa-box me-2"></i>Modifier un équipement
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="{{ route('equipments.update', $equipment->numero_de_serie) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="row">
-                                                <!-- Numéro de Série -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="numero_de_serie">Numéro de Série</label>
-                                                    <input type="text" name="numero_de_serie" id="numero_de_serie" class="form-control @error('numero_de_serie') is-invalid @enderror" value="{{ old('numero_de_serie', $equipment->numero_de_serie) }}" required>
-                                                    @error('numero_de_serie')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Article -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="article">Article</label>
-                                                    <input type="text" name="article" id="article" class="form-control @error('article') is-invalid @enderror" value="{{ old('article', $equipment->article) }}">
-                                                    @error('article')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Quantité -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="quantite">Quantité</label>
-                                                    <input type="number" name="quantite" id="quantite" class="form-control @error('quantite') is-invalid @enderror" value="{{ old('quantite', $equipment->quantite) }}">
-                                                    @error('quantite')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Date d'Acquisition -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="date_acquisition">Date d'Acquisition</label>
-                                                    <input type="date" name="date_acquisition" id="date_acquisition" class="form-control @error('date_acquisition') is-invalid @enderror" value="{{ old('date_acquisition', $equipment->date_acquisition) }}">
-                                                    @error('date_acquisition')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Date de Mise en Oeuvre -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="date_de_mise_en_oeuvre">Date de Mise en Oeuvre</label>
-                                                    <input type="date" name="date_de_mise_en_oeuvre" id="date_de_mise_en_oeuvre" class="form-control @error('date_de_mise_en_oeuvre') is-invalid @enderror" value="{{ old('date_de_mise_en_oeuvre', $equipment->date_de_mise_en_oeuvre) }}">
-                                                    @error('date_de_mise_en_oeuvre')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Catégorie -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="categorie">Catégorie</label>
-                                                    <input type="text" name="categorie" id="categorie" class="form-control @error('categorie') is-invalid @enderror" value="{{ old('categorie', $equipment->categorie) }}">
-                                                    @error('categorie')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Sous Catégorie -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="sous_categorie">Sous Catégorie</label>
-                                                    <input type="text" name="sous_categorie" id="sous_categorie" class="form-control @error('sous_categorie') is-invalid @enderror" value="{{ old('sous_categorie', $equipment->sous_categorie) }}">
-                                                    @error('sous_categorie')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Matricule -->
-                                                <div class="col-md-6 mb-3">
-                                                    <label for="matricule">Matricule</label>
-                                                    <input type="text" name="matricule" id="matricule" class="form-control @error('matricule') is-invalid @enderror" value="{{ old('matricule', $equipment->matricule) }}">
-                                                    @error('matricule')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                    
-                                                <!-- Submit Button -->
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary"><i class="fas fa-edit me-2"></i>Modifier</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                   
-                        <!-- Supprimer button with icon -->
-                        <form action="{{ route('equipments.destroy', $equipment->numero_de_serie) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">
-                                <i class="fas fa-trash-alt"></i> 
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-            @endif
-        </tbody>
-    </table>
+                                <!-- Delete Button -->
+                                <form action="{{ route('equipments.destroy', $equipment->numero_de_serie) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="9" class="text-center">Aucun équipement trouvé.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
 
 {{-- Success Message --}}
 @if(session('success'))
@@ -388,8 +282,6 @@ title="Ajouter un nouvel équipement">
     </div>
 @endif
 
-
 @include('layouts.sidebar')
 
-@endsection      
-
+@endsection

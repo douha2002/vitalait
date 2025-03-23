@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('numero_de_serie'); // Must match equipements table
             $table->string('employees_id'); // Must match employees table
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
+            $table->date('date_debut');
+            $table->date('date_fin')->nullable();
             $table->timestamps();
     
             $table->foreign('numero_de_serie')->references('numero_de_serie')->on('equipements');

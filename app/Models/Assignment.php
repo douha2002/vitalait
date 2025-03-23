@@ -16,8 +16,8 @@ class Assignment extends Model
     protected $fillable = [
         'numero_de_serie',
         'employees_id',
-        'start_date',
-        'end_date',
+        'date_debut',
+        'date_fin',
     ];
     protected $dates = ['deleted_at']; // Permet d'utiliser les soft deletes
 
