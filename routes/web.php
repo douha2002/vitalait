@@ -11,6 +11,19 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AssignmentController;
 use App\Models\Assignment;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\StockController;
+use Illuminate\Support\Facades\Artisan;
+use Phpml\Classification\KNearestNeighbors;
+use Illuminate\Http\Request;
+use App\Mail\LowStockAlert;
+use Illuminate\Support\Facades\Mail;
+
+
+
+
+
+
+
 
 
 
@@ -19,6 +32,34 @@ Route::get('/', function () {
 })->name('welcome');
 
 Auth::routes();
+
+// Add this API route (you can change the URL if needed)
+Route::post('/api/send-stock-alert', function (Request $request) {
+    $request->validate([
+        'email' => 'required|email',
+        'low_stock_items' => 'required|array'
+    ]);
+    
+    // Convert array to collection of fake Stock models
+    $items = collect($request->low_stock_items)->map(function ($item) {
+        return new class($item) {
+            public function __construct($data) {
+                foreach ($data as $key => $value) {
+                    $this->$key = $value;
+                }
+            }
+        };
+    });
+
+    try {
+        Mail::to($request->email)->send(new LowStockAlert($items));
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        \Log::error("Email sending failed: " . $e->getMessage());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+})->middleware('auth'); // Remove this if you want unauthenticated access
+
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
@@ -72,6 +113,24 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/maintenances/{id}', [MaintenanceController::class, 'update'])->name('maintenances.update');
 
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/stock/search', [StockController::class, 'search'])->name('stock.search');
+    Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+    Route::get('/stock/available', [StockController::class, 'getAvailableEquipments'])->name('stock.available');
+    Route::post('/stock/add', [StockController::class, 'addToStock'])->name('stock.add');
+
+});
+
+Route::get('/test-ml', function() {
+    $samples = [[1, 3], [1, 4], [2, 4], [3, 1], [4, 1], [4, 2]];
+    $labels = ['a', 'a', 'a', 'b', 'b', 'b'];
+
+    $classifier = new KNearestNeighbors();
+    $classifier->train($samples, $labels);
+
+    return $classifier->predict([3, 2]); // Should return 'b'
+});
+
 
 
 

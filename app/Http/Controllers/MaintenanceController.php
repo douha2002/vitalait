@@ -7,6 +7,7 @@ use App\Models\Fournisseur;
 use App\Models\Contrat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Stock;
 
 class MaintenanceController extends Controller
 {
@@ -72,6 +73,14 @@ class MaintenanceController extends Controller
         $equipment->statut = 'En panne';
     }
     $equipment->save();
+
+        // ✅ REMOVE from stock (update quantity)
+        $stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+        if ($stockItem) {
+            $stockItem->quantite = max($stockItem->quantite - 1, 0);
+            $stockItem->save();
+        }
 
     return redirect()->route('maintenances.index')->with('success', 'Maintenance planifiée avec succès.');
 }

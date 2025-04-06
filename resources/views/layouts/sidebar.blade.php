@@ -106,7 +106,7 @@
                     </a>
                 </li>
                 <li class="mb-3">
-                    <a href="#" class="text-white text-decoration-none">
+                    <a href="{{ route('stock.index')}}" class="text-white text-decoration-none">
                         <i class="fas fa-box-archive me-2"></i> Stock
                     </a>
                 </li>

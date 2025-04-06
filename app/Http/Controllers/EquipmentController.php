@@ -144,6 +144,10 @@ public function import(Request $request)
         if ($request->filled('sous_categorie')) {
             $query->where('sous_categorie', 'like', '%' . $request->sous_categorie . '%');
         }
+         // Filter by Sous Catégorie
+         if ($request->filled('categorie')) {
+            $query->where('categorie', 'like', '%' . $request->sous_categorie . '%');
+        }
 
         // Filter by Matricule
         if ($request->filled('matricule')) {

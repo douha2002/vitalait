@@ -8,7 +8,7 @@
         <div class="search-container w-50">
             <form method="GET" action="{{ route('search') }}" class="search-form">
                 <div class="input-group">
-                    <input type="text" name="search" id="search" class="form-control shadow-sm" placeholder="Rechercher par Article, Quantité, etc..">
+                    <input type="text" name="search" id="search" class="form-control shadow-sm" placeholder="Rechercher par numero de serie, article, etc..">
                     <button type="submit" class="btn btn-outline-secondary shadow-sm"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -147,6 +147,8 @@
                                     <span class="badge bg-success"><i class="bi bi-check-lg"></i> {{ __('Affecté') }}</span>
                                 @elseif ($equipment->statut === 'En panne')
                                     <span class="badge bg-danger"><i class="bi bi-exclamation-circle"></i> {{ __('En panne') }}</span>
+                                @elseif ($equipment->statut === 'En stock')
+                                    <span class="badge bg-primary"><i class="bi bi-box-seam"></i> {{ __('En stock') }}</span>   
                                 @endif
                             </td>                            
                             <td class="d-flex justify-content-center justify-content-between ">

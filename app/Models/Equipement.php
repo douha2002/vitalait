@@ -63,12 +63,31 @@ public function maintenances()
 {
     return $this->hasMany(Maintenance::class, 'numero_de_serie', 'numero_de_serie');
 }
+public function markAsAssigned()
+{
+    if ($this->statut !== 'Affecté') {
+        $this->statut = 'Affecté';
+        $this->save();
+
+        // Decrease the stock quantity
+        Stock::where('sous_categorie', $this->sous_categorie)
+            ->where('quantite', '>', 0)
+            ->decrement('quantite', 1);
+    }
+}
+
+
 
 protected static function boot()
 {
     parent::boot();
 
     static::saving(function ($equipment) {
+        // Allow 'En stock' updates
+        if ($equipment->statut === 'En stock') {
+            return;
+        }
+
         // Vérifie si l'équipement est en maintenance
         if ($equipment->hasActiveMaintenances()) {
             $equipment->statut = 'En panne';

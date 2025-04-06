@@ -6,6 +6,7 @@ use App\Models\Assignment;
 use App\Models\Equipement; // Correctly importing Equipement model
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Models\Stock;
 
 class AssignmentController extends Controller
 { 
@@ -58,7 +59,7 @@ class AssignmentController extends Controller
     // If there is an active assignment, return with an error message
     if ($existingAssignment) {
         return redirect()->route('assignments.index')->withErrors([
-            'error' => 'Cet équipement est déjà affecté. Vous ne pouvez pas l\'affecter à nouveau tant qu\'il n\'est pas retourné.',
+            'error' => 'Cet équipement est déjà affecté.',
         ]);
     }
 
@@ -85,6 +86,15 @@ class AssignmentController extends Controller
             $equipment->statut = 'Affecté';
         }
         $equipment->save();
+
+    // ✅ REMOVE from stock (update quantity)
+    $stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+    if ($stockItem) {
+        $stockItem->quantite = max($stockItem->quantite - 1, 0);
+        $stockItem->save();
+    }
+    
     
         return redirect()->route('assignments.index')->with('success', 'Équipement affecté avec succès.');
     }
