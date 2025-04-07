@@ -21,6 +21,6 @@ class LowStockAlert extends Mailable
     public function build()
     {
         return $this->subject('Alerte: Stock Faible - Demande d\'Achat')
-                    ->view('emails.low_stock_alert');
+                    ->view('emails.stock_alert');
     }
 }
