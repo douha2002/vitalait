@@ -48,7 +48,9 @@
                                 @foreach($equipements as $equipement)
                                     <option value="{{ $equipement->numero_de_serie }}"
                                             data-fournisseur="{{ optional($equipement->contrat)->fournisseur_id }}"
-                                            data-statut="{{ $equipement->statut }}">
+                                            data-statut="{{ $equipement->statut }}"
+                                            data-date-fin="{{ optional($equipement->contrat)->date_fin }}">
+
                                         {{ $equipement->numero_de_serie }}
                                     </option>
                                 @endforeach
@@ -269,28 +271,35 @@
         const equipementSelect = document.getElementById("equipement");
         if (equipementSelect) {
             equipementSelect.addEventListener("change", function () {
-                const selected = this.options[this.selectedIndex];
-                const fournisseurId = selected.getAttribute("data-fournisseur");
-                const statut = selected.getAttribute("data-statut");
-                const alertBox = document.getElementById("contract-alert");
-                const affecteAlert = document.getElementById("affecte-alert");
+    const selected = this.options[this.selectedIndex];
+    const fournisseurId = selected.getAttribute("data-fournisseur");
+    const statut = selected.getAttribute("data-statut");
+    const dateFin = selected.getAttribute("data-date-fin");
+    const alertBox = document.getElementById("contract-alert");
+    const affecteAlert = document.getElementById("affecte-alert");
 
-                alertBox.classList.add("d-none");
-                affecteAlert.classList.add("d-none");
+    alertBox.classList.add("d-none");
+    affecteAlert.classList.add("d-none");
 
-                if (statut === "Affecté") {
-                    affecteAlert.classList.remove("d-none");
-                } else {
-                    if (fournisseurId) {
-                        document.getElementById("fournisseur").value = fournisseurId;
-                        alertBox.innerHTML = "⚠️ Attention : Cet équipement a un contrat avec le fournisseur sélectionné automatiquement.";
-                    } else {
-                        document.getElementById("fournisseur").value = "";
-                        alertBox.innerHTML = "⚠️ Aucun contrat trouvé pour cet équipement. Veuillez sélectionner un fournisseur.";
-                    }
-                    alertBox.classList.remove("d-none");
-                }
-            });
+    if (statut === "Affecté") {
+        affecteAlert.classList.remove("d-none");
+    } else {
+        const today = new Date().toISOString().split('T')[0];
+
+        if (fournisseurId && dateFin && dateFin >= today) {
+            // Contrat valide
+            document.getElementById("fournisseur").value = fournisseurId;
+            alertBox.innerHTML = "⚠️ Attention : Cet équipement a un contrat avec le fournisseur sélectionné automatiquement.";
+        } else {
+            // Contrat expiré ou inexistant
+            document.getElementById("fournisseur").value = "";
+            alertBox.innerHTML = "⚠️ Aucun contrat trouvé pour cet équipement. Veuillez sélectionner un fournisseur.";
+        }
+
+        alertBox.classList.remove("d-none");
+    }
+});
+
         }
     });
 </script>

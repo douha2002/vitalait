@@ -93,13 +93,29 @@ public function import(Request $request)
     public function destroy($numero_de_serie)
 {
     \Log::info('Attempting to delete equipment with serial number: ' . $numero_de_serie);
+
     $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
     \Log::info('Equipment found: ' . $equipment->numero_de_serie);
 
-    if ($equipment->assignments()->exists()) {
-        \Log::info('Equipment has assignments, cannot delete.');
+    // ❌ Block deletion if statut is "Affecté" or "En panne"
+    if (in_array($equipment->statut, ['Affecté', 'En panne'])) {
+        \Log::warning('Cannot delete equipment with statut: ' . $equipment->statut);
         return redirect()->route('equipments.index')
-            ->with('error', 'Impossible de supprimer cet équipement car il est encore assigné.');
+            ->with('error', 'Impossible de supprimer cet équipement car il est "' . $equipment->statut . '".');
+    }
+
+    // ✅ Update stock if statut is "En stock"
+    if ($equipment->statut === 'En stock' && $equipment->sous_categorie) {
+        $stock = \App\Models\Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+        if ($stock) {
+            $stock->quantite = max(0, $stock->quantite - 1);
+            if ($stock->quantite === 0) {
+                $stock->delete();
+            } else {
+                $stock->save();
+            }
+        }
     }
 
     $equipment->delete();
@@ -107,6 +123,7 @@ public function import(Request $request)
 
     return redirect()->route('equipments.index')->with('success', 'Équipement supprimé.');
 }
+
 
 
     public function search(Request $request)
