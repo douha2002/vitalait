@@ -12,7 +12,7 @@ class Maintenance extends Model
         'fournisseur_id',
         'date_debut',
         'date_fin',
-        'commentaire',
+        'commentaires',
     ];
 
     public function equipement()

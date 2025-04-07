@@ -93,6 +93,7 @@ public function import(Request $request)
     public function destroy($numero_de_serie)
 {
     \Log::info('Attempting to delete equipment with serial number: ' . $numero_de_serie);
+
     $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
     \Log::info('Equipment found: ' . $equipment->numero_de_serie);
 
@@ -100,6 +101,21 @@ public function import(Request $request)
         \Log::info('Equipment has assignments, cannot delete.');
         return redirect()->route('equipments.index')
             ->with('error', 'Impossible de supprimer cet équipement car il est encore assigné.');
+    }
+
+    // If statut is "En stock", update stock table
+    if ($equipment->statut === 'En stock' && $equipment->sous_categorie) {
+        $stock = \App\Models\Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+        if ($stock) {
+            // Decrement quantity by 1
+            $stock->quantite = max(0, $stock->quantite - 1); // avoid negative
+            if ($stock->quantite === 0) {
+                $stock->delete(); // remove if empty
+            } else {
+                $stock->save();
+            }
+        }
     }
 
     $equipment->delete();
