@@ -30,6 +30,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
    
 
@@ -139,6 +140,18 @@
     margin-top: 0 !important;
     padding-top: 0 !important;
 
+}
+.chart-container {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    width: 100%;
+}
+
+.chart-error {
+    color: #f44336;
+    padding: 20px;
+    text-align: center;
 }
     </style>
     

@@ -1,0 +1,61 @@
+2025-04-07 11:59:13,740 - INFO - Démarrage du système de surveillance de stock...
+2025-04-07 11:59:13,772 - ERROR - Erreur critique: 'No time zone found with key Africa/Tunisia'
+2025-04-07 12:00:53,050 - INFO - Démarrage du système de surveillance de stock...
+2025-04-07 12:00:53,071 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-07 12:00:53,076 - INFO - Added job "stock_check" to job store "default"
+2025-04-07 12:00:53,077 - INFO - Scheduler started
+2025-04-07 12:01:00,110 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:01:00 UTC)" (scheduled at 2025-04-07 11:01:00+00:00)
+2025-04-07 12:01:00,692 - ERROR - Erreur de base de données: 1054 (42S22): Unknown column 'seuil_min' in 'field list'
+2025-04-07 12:01:00,693 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:02:00 UTC)" executed successfully
+2025-04-07 12:02:00,112 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:03:00 UTC)" (scheduled at 2025-04-07 11:02:00+00:00)
+2025-04-07 12:02:00,233 - ERROR - Erreur de base de données: 1054 (42S22): Unknown column 'seuil_min' in 'field list'
+2025-04-07 12:02:00,266 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:03:00 UTC)" executed successfully
+2025-04-07 12:03:00,192 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:04:00 UTC)" (scheduled at 2025-04-07 11:03:00+00:00)
+2025-04-07 12:03:00,245 - ERROR - Erreur de base de données: 1054 (42S22): Unknown column 'seuil_min' in 'field list'
+2025-04-07 12:03:00,280 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:04:00 UTC)" executed successfully
+2025-04-07 12:03:35,189 - INFO - Arrêt du système...
+2025-04-07 12:03:35,192 - INFO - Scheduler has been shut down
+2025-04-07 12:03:41,386 - INFO - Démarrage du système de surveillance de stock...
+2025-04-07 12:03:41,406 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-07 12:03:41,410 - INFO - Added job "stock_check" to job store "default"
+2025-04-07 12:03:41,411 - INFO - Scheduler started
+2025-04-07 12:04:00,068 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:04:00 UTC)" (scheduled at 2025-04-07 11:04:00+00:00)
+2025-04-07 12:04:00,815 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:04:03,797 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:04:03,922 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:05:00 UTC)" executed successfully
+2025-04-07 12:05:00,113 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:06:00 UTC)" (scheduled at 2025-04-07 11:05:00+00:00)
+2025-04-07 12:05:00,132 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:05:03,604 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:05:03,700 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:06:00 UTC)" executed successfully
+2025-04-07 12:06:00,057 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:07:00 UTC)" (scheduled at 2025-04-07 11:06:00+00:00)
+2025-04-07 12:06:00,114 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:06:02,457 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:06:02,556 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:07:00 UTC)" executed successfully
+2025-04-07 12:07:00,376 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:08:00 UTC)" (scheduled at 2025-04-07 11:07:00+00:00)
+2025-04-07 12:07:00,562 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:07:03,513 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:07:03,612 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:08:00 UTC)" executed successfully
+2025-04-07 12:08:00,125 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:09:00 UTC)" (scheduled at 2025-04-07 11:08:00+00:00)
+2025-04-07 12:08:00,166 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:08:02,792 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:08:02,939 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:09:00 UTC)" executed successfully
+2025-04-07 12:09:00,144 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:10:00 UTC)" (scheduled at 2025-04-07 11:09:00+00:00)
+2025-04-07 12:09:00,450 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:09:04,521 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:09:04,677 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:10:00 UTC)" executed successfully
+2025-04-07 12:10:00,038 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:11:00 UTC)" (scheduled at 2025-04-07 11:10:00+00:00)
+2025-04-07 12:10:00,212 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:10:07,432 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:10:07,537 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:11:00 UTC)" executed successfully
+2025-04-07 12:11:00,059 - INFO - Running job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:12:00 UTC)" (scheduled at 2025-04-07 11:11:00+00:00)
+2025-04-07 12:11:00,118 - WARNING - 2 éléments en stock critique détectés
+2025-04-07 12:11:02,329 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-07 12:11:02,511 - INFO - Job "stock_check (trigger: cron[minute='*'], next run at: 2025-04-07 11:12:00 UTC)" executed successfully
+2025-04-07 12:11:39,618 - INFO - Arrêt du système...
+2025-04-07 12:11:39,635 - INFO - Scheduler has been shut down
+2025-04-07 12:12:33,217 - INFO - Démarrage du système de surveillance de stock...
+2025-04-07 12:12:33,255 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-07 12:12:33,259 - INFO - Added job "stock_check" to job store "default"
+2025-04-07 12:12:33,260 - INFO - Scheduler started
+2025-04-07 12:25:37,301 - INFO - Arrêt du système...
+2025-04-07 12:25:37,353 - INFO - Scheduler has been shut down

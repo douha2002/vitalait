@@ -7,6 +7,8 @@ use App\Models\Equipement; // Correctly importing Equipement model
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\Stock;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AssignmentController extends Controller
 { 
@@ -247,5 +249,52 @@ public function restore($id)
     $assignment->restore(); // Restore the soft deleted record
     return back()->with('success', 'Affectation restaurée avec succès.');
 }
+
+
+public function getAssignmentsByMonth(Request $request)
+{
+    $year = $request->input('year', date('Y'));
+
+    $data = DB::table('assignments')
+        ->join('equipements', 'assignments.numero_de_serie', '=', 'equipements.numero_de_serie')
+        ->whereYear('assignments.date_debut', $year)
+        ->selectRaw('
+            sous_categorie,
+            MONTH(date_debut) as mois,
+            COUNT(*) as total
+        ')
+        ->groupBy('sous_categorie', 'mois')
+        ->get();
+
+    // Initialiser tableau par mois de 1 à 12
+    $labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    $sousCategories = $data->pluck('sous_categorie')->unique();
+    $datasets = [];
+
+    foreach ($sousCategories as $categorie) {
+        $dataset = [
+            'label' => $categorie,
+            'data' => array_fill(0, 12, 0),
+            'backgroundColor' => '#' . substr(md5($categorie), 0, 6),
+        ];
+
+        foreach ($data as $entry) {
+            if ($entry->sous_categorie === $categorie) {
+                $dataset['data'][$entry->mois - 1] = $entry->total;
+            }
+        }
+
+        $datasets[] = $dataset;
+    }
+
+    return response()->json([
+        'labels' => $labels,
+        'datasets' => $datasets,
+    ]);
+}
+
+
+
+
 
 }
