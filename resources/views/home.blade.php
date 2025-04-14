@@ -1,190 +1,120 @@
  @extends('layouts.app')
 
 @section('content')
-   
-        <div style="margin-top: 30px; padding: 0 20px;">
+    <!-- Main Content -->
+    <div class="main-content">
+        @if (session('status'))
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
 
-        <div style="
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap; /* Ensures they wrap on smaller screens */
-    margin-top: 30px;">
-
-        <div style="
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    text-align: center;
-    width: 100%;
-    max-width: 220px;
-    margin: auto;
-    transition: all 0.3s ease;
-">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <!-- Icon -->
-        <div style="
-            background-color: #e0f7fa;
-            border-radius: 50%;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#00bcd4" class="bi bi-hdd-stack" viewBox="0 0 16 16">
-                <path d="M14 4H2a1 1 0 0 0-1 1v1h14V5a1 1 0 0 0-1-1Zm1 2.5H1v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1ZM14 11H2a1 1 0 0 0-1 1v1h14v-1a1 1 0 0 0-1-1Zm1 2.5H1v.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.5Z"/>
-            </svg>
-        </div>
-
-        <!-- Title -->
-        <h5 style="margin: 0; font-size: 1rem; color: #333;">Nombre total d'équipements</h5>
-
-        <!-- Count -->
-        <h2 id="equipment-count" style="font-size: 2.2rem; font-weight: bold; margin: 10px 0 0; color: #00bcd4;">
-            0
-        </h2>
-    </div>
-        </div>
-   
-    <div style="
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    text-align: center;
-    width: 100%;
-    max-width: 220px;
-    margin: auto;
-    transition: all 0.3s ease;
-">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <!-- Icon -->
-        <div style="
-            background-color: #e0f7fa;
-            border-radius: 50%;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#00bcd4" class="bi bi-person-check" viewBox="0 0 16 16">
-                <path d="M15.854 5.146a.5.5 0 0 1 0 .708l-3.182 3.182a.5.5 0 0 1-.707 0l-1.182-1.182a.5.5 0 1 1 .707-.707l.829.828 2.828-2.828a.5.5 0 0 1 .707 0z"/>
-                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm6-4c-2.577 0-4.129 1.292-4.828 2H11.83c-.699-.708-2.25-2-4.828-2z"/>
-                <path d="M8 7a3 3 0 1 0-6 0 3 3 0 0 0 6 0z"/>
-            </svg>
-        </div>
-  <!-- Title -->
-  <h5 style="margin: 0; font-size: 1rem; color: #333;">Nombre total des affectations</h5>
-
-  <!-- Count -->
-  <h2 id="assignment-count" style="font-size: 2.2rem; font-weight: bold; margin: 10px 0 0; color: #00bcd4;">
-      0
-  </h2>
-    </div>
-    </div>
-    <div style="
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    text-align: center;
-    width: 100%;
-    max-width: 220px;
-    margin: auto;
-    transition: all 0.3s ease;
-">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <!-- Icon -->
-        <div style="
-            background-color: #e0f7fa;
-            border-radius: 50%;
-            padding: 15px;
-            margin-bottom: 15px;
-        ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#f44336" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-                <path d="M7.938 2.016a.13.13 0 0 1 .125 0l6.857 11.856c.04.07.04.158 0 .228a.13.13 0 0 1-.125.07H1.205a.13.13 0 0 1-.125-.07.13.13 0 0 1 0-.228L7.938 2.016zm.562-.823a1.13 1.13 0 0 0-1 0L.643 13.05c-.56.967.12 2.18 1.25 2.18h12.214c1.13 0 1.81-1.213 1.25-2.18L8.5 1.193zM7.001 11a1 1 0 1 0 2 0 1 1 0 0 0-2 0zm.93-6.481a.5.5 0 0 0-.858 0l-2.5 4.5a.5.5 0 0 0 .43.75h5a.5.5 0 0 0 .43-.75l-2.5-4.5z"/>
-              </svg>
-              
-        </div>
-  <!-- Title -->
-  <h5 style="margin: 0; font-size: 1rem; color: #333;">Nombre total des équipements en panne</h5>
-
-  <!-- Count -->
-  <h2 id="maintenance-count" style="font-size: 2.2rem; font-weight: bold; margin: 10px 0 0; color: #00bcd4;">
-      0
-  </h2>
-        </div>
-    </div>
-        <div style="
-        background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    text-align: center;
-    width: 100%;
-    max-width: 220px;
-    margin: auto;
-    transition: all 0.3s ease;
-    ">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <!-- Icon -->
-            <div style="
-                background-color: #e0f7fa;
+     
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+            }
+            .dashboard-card {
+                background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+                border-radius: 2rem;
+                padding: 1.5rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+                flex: 1;
+                min-width: 200px;
+                max-width: 240px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: transform 0.3s ease;
+            }
+            .dashboard-card:hover {
+                transform: translateY(-5px);
+            }
+            .icon-container {
+                background: #e3f2fd;
                 border-radius: 50%;
-                padding: 15px;
-                margin-bottom: 15px;
-            ">
-               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#2196f3" class="bi bi-box" viewBox="0 0 16 16">
-                <path d="M8.21.5a1 1 0 0 0-.42 0l-6 1.5A1 1 0 0 0 1 3v10a1 1 0 0 0 .79.97l6 1.5a1 1 0 0 0 .42 0l6-1.5A1 1 0 0 0 15 13V3a1 1 0 0 0-.79-.97l-6-1.5zM2 3.2l6 1.5v9.6l-6-1.5V3.2zM14 3.2v9.6l-6 1.5V4.7l6-1.5z"/>
-              </svg>
-              
-                  
-            </div>
-      <!-- Title -->
-      <h5 style="margin: 0; font-size: 1rem; color: #333;">Nombre total des équipements en stock</h5>
-    
-      <!-- Count -->
-      <h2 id="stock-count" style="font-size: 2.2rem; font-weight: bold; margin: 10px 0 0; color: #00bcd4;">
-          0
-      </h2>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-start; padding: 30px;">
-            <div style="background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <canvas id="equipementDonutChart" width="300" height="300"></canvas>
-            </div>
-        </div>
-
-        <div class="chart-section">
-            <h5 style="text-align: center;">Statut des Employees</h5>
-            <canvas id="employeeAssignmentCircle" width="200" height="200"></canvas>
-        </div>
-        <!-- Contrats Expiry Circle -->
-<div class="chart-section">
-    <h5 style="text-align: center;">Statut des Contrats</h5>
-    <canvas id="contratCircleChart" width="200" height="200"></canvas>
-</div>
-
-        <div style="width: 100%; margin: 20px 0;">
-            <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <!-- Chart Title -->
-                    <!-- Year Select -->
-                    <select id="yearSelector" style="padding: 5px 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;" onchange="changeYear()">
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <!-- Add more years as needed -->
-                    </select>
-                    
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            .dashboard-title {
+                color: #333;
+                font-size: 1rem;
+                margin-bottom: 0.3rem;
+            }
+            .dashboard-count {
+                font-size: 2rem;
+                font-weight: 600;
+                color: #1976d2;
+            }
+        </style>
+        
+        <div style="padding: 2rem;">
+            {{-- Cards Section --}}
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: space-between;">
+                @php
+                    $cards = [
+                        ['title' => 'Total Équipements', 'icon' => 'bi-hdd-stack', 'color' => '#1976d2', 'id' => 'equipment-count'],
+                        ['title' => 'Total Affectations', 'icon' => 'bi-person-check', 'color' => '#43a047', 'id' => 'assignment-count'],
+                        ['title' => 'Équipements en Panne', 'icon' => 'bi-exclamation-triangle', 'color' => '#e53935', 'id' => 'maintenance-count'],
+                        ['title' => 'Stock Disponible', 'icon' => 'bi-box', 'color' => '#fb8c00', 'id' => 'stock-count']
+                    ];
+                @endphp
+        
+                @foreach($cards as $card)
+                <div class="dashboard-card">
+                    <div class="icon-container">
+                        <i class="bi {{ $card['icon'] }}" style="font-size: 2rem; color: {{ $card['color'] }}"></i>
+                    </div>
+                    <div class="dashboard-title">{{ $card['title'] }}</div>
+                    <div class="dashboard-count" id="{{ $card['id'] }}">0</div>
                 </div>
-                <div style="position: relative; height: 500px;">
-                    <canvas id="assignmentsBarChart"></canvas>
+                @endforeach
+            </div>
+        
+            {{-- Donut Chart --}}
+            <div style="margin-top: 2rem; display: flex; flex-direction: row; gap: 2rem;">
+                <div style="flex: 1;">
+                    <div style="background: #fff; border-radius: 2rem; padding: 2rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);">
+                        <canvas id="equipementDonutChart"></canvas>
+                    </div>
+                </div>
+        
+                {{-- Circle Charts --}}
+                <div style="flex: 1;">
+                    <h5 style="text-align: center;">Statut des Employés</h5>
+                    <canvas id="employeeAssignmentCircle" style="max-height: 220px;"></canvas>
+        
+                    <h5 style="text-align: center; margin-top: 2rem;">Statut des Contrats</h5>
+                    <canvas id="contratCircleChart" style="max-height: 220px;"></canvas>
                 </div>
             </div>
-        </div>
+        
+            {{-- Bar Chart --}}
+            <div style="width: 100%; margin: 20px 0;">
+                <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <!-- Chart Title -->
+                        <!-- Year Select -->
+                        <select id="yearSelector" style="padding: 5px 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;" onchange="changeYear()">
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <!-- Add more years as needed -->
+                        </select>
+                        
+                    </div>
+                    <div style="position: relative; height: 500px;">
+                        <canvas id="assignmentsBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        
+        
         
         
        
 
+</div>
 <!--script circle contrat-->
   <script>
      const total = {{ $totalContrats }};
