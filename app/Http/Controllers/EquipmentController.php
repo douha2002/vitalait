@@ -26,7 +26,7 @@ class EquipmentController extends Controller
         'date_acquisition' => 'required|date',
         'date_de_mise_en_oeuvre' => 'nullable|date',
         'categorie' => 'nullable|string|max:255',
-        'sous_categorie' => 'nullable|string|max:255',
+        'sous_categorie' => 'required|nullable|string|max:255',
         'matricule' => 'nullable|string|max:255',
     ]);
     // Store data in database
@@ -126,59 +126,30 @@ public function import(Request $request)
 
 
 
-    public function search(Request $request)
-    {
-        $query = Equipement::query();
+public function search(Request $request)
+{
+    $searchTerm = $request->input('search');
 
-        // Filter by Numéro de Série
-        if ($request->filled('numero_de_serie')) {
-            $query->where('numero_de_serie', 'like', '%' . $request->numero_de_serie . '%');
-        }
+    $query = Equipement::query();
 
-        // Filter by Article
-        if ($request->filled('article')) {
-            $query->where('article', 'like', '%' . $request->article . '%');
-        }
-
-
-
-        // Filter by Date d'Acquisition
-        if ($request->filled('date_acquisition')) {
-            $query->whereDate('date_acquisition', $request->date_acquisition);
-        }
-
-        // Filter by Date de Mise en Oeuvre
-        if ($request->filled('date_de_mise_en_oeuvre')) {
-            $query->whereDate('date_de_mise_en_oeuvre', $request->date_de_mise_en_oeuvre);
-        }
-
-        // Filter by Catégorie
-        if ($request->filled('categorie')) {
-            $query->where('categorie', $request->categorie);
-        }
-
-        // Filter by Sous Catégorie
-        if ($request->filled('sous_categorie')) {
-            $query->where('sous_categorie', 'like', '%' . $request->sous_categorie . '%');
-        }
-         // Filter by Sous Catégorie
-         if ($request->filled('categorie')) {
-            $query->where('categorie', 'like', '%' . $request->sous_categorie . '%');
-        }
-
-        // Filter by Matricule
-        if ($request->filled('matricule')) {
-            $query->where('matricule', 'like', '%' . $request->matricule . '%');
-        }
-
-        // Get the results
-        $equipments = $query->get();
-        $noResults = $equipments->isEmpty();
-
-        // Get categories for the dropdown (if needed)
-        $categories = Category::all();
-
-        return view('equipments.index', compact('equipments', 'categories', 'noResults'));
+    if ($searchTerm) {
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('numero_de_serie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('article', 'like', '%' . $searchTerm . '%')
+              ->orWhere('date_acquisition', 'like', '%' . $searchTerm . '%')
+              ->orWhere('date_de_mise_en_oeuvre', 'like', '%' . $searchTerm . '%')
+              ->orWhere('categorie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('sous_categorie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('matricule', 'like', '%' . $searchTerm . '%');
+        });
     }
+
+    $equipments = $query->get();
+    $noResults = $equipments->isEmpty();
+
+    return view('equipments.index', compact('equipments', 'noResults'));
+}
+
+
     
 }

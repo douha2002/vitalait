@@ -39,13 +39,18 @@
             </tr>
         </thead>
         <tbody>
-        
+            @if($stocks->isEmpty())
+            <tr>
+                <td colspan="5" class="text-center">Aucune equipement dans le stock .</td>
+            </tr>
+        @else
             @foreach($stocks as $stock)
             <tr>
                 <td>{{ $stock->sous_categorie }}</td>
                 <td>{{ $stock->quantite }}</td>
             </tr>
             @endforeach
+        @endif
         </tbody>
     </table>
 </div>

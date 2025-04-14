@@ -31,10 +31,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
    
 
 <style>
+    
     .search-container {
         width: 100%;
         padding: 10px 0;
@@ -153,6 +155,7 @@
     padding: 20px;
     text-align: center;
 }
+
     </style>
     
     

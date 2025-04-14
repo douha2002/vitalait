@@ -103,7 +103,7 @@ class UserController extends Controller
 
         // ✅ Ensure the status is updated
         $user = User::findOrFail($id);
-        $user->status = 'approved';
+        $user->status = 'Approuvé';
         $user->save();
 
         // Send approval email
@@ -126,7 +126,7 @@ class UserController extends Controller
         }
         // Find user by ID and update status
     $user = User::findOrFail($id);
-    $user->status = 'rejected';
+    $user->status = 'Rejeté';
     $user->save();
 
     // Send rejection email

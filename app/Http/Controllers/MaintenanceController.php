@@ -19,19 +19,14 @@ class MaintenanceController extends Controller
         return view('maintenances.index', compact('maintenances','equipements', 'fournisseurs'));
     }
 
-    public function create()
-    {
-        $equipements = Equipement::all();
-        $fournisseurs = Fournisseur::all();
-        return view('maintenances.create', compact('equipements', 'fournisseurs'));
-    }
+   
 
     public function store(Request $request)
 {
     // Validate the input
     $validated = $request->validate([
         'numero_de_serie' => 'required|exists:equipements,numero_de_serie',
-        'fournisseur_id' => 'nullable|exists:fournisseurs,id',
+        'fournisseur_id' => 'required|exists:fournisseurs,id',
         'date_debut' => 'required|date',
         'date_fin' => 'nullable|date|after:date_debut',
         'commentaires' => 'nullable|string',
@@ -124,27 +119,25 @@ public function update(Request $request, $id)
 }
 public function search(Request $request)
 {
-    $query = Maintenance::query();
+    $searchTerm = $request->input('search');
 
-    // Filter by Numéro de Série
-    if ($request->filled('search')) {
-        $query->whereHas('equipement', function ($q) use ($request) {
-            $q->where('numero_de_serie', 'like', '%' . $request->search . '%');
+    $maintenances = Maintenance::with(['equipement', 'fournisseur'])
+        ->when($searchTerm, function ($query) use ($searchTerm) {
+            $query->whereHas('fournisseur', function ($q) use ($searchTerm) {
+                $q->where('nom', 'like', '%' . $searchTerm . '%');
+            })
+            ->orWhereHas('equipement', function ($q) use ($searchTerm) {
+                $q->where('numero_de_serie', 'like', '%' . $searchTerm . '%');
+            });
         })
-        ->orWhereHas('fournisseur', function ($q) use ($request) {
-            $q->where('nom', 'like', '%' . $request->search . '%');
-        });
-    }
+        ->get();
 
-    // Get the results
-    $maintenances = $query->get();
     $noResults = $maintenances->isEmpty();
 
-    // Retrieve all equipements to ensure they're available in the view
     $equipements = Equipement::all();
     $fournisseurs = Fournisseur::all();
 
-
-    return view('maintenances.index', compact('maintenances', 'equipements','fournisseurs', 'noResults'));
+    return view('maintenances.index', compact('maintenances', 'equipements', 'fournisseurs', 'noResults'));
 }
+
 }

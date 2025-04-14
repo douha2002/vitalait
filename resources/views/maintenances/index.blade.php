@@ -80,7 +80,7 @@
                         <!-- Commentaires -->
                         <div class="mb-3">
                             <label class="fw-semibold">Commentaires :</label>
-                            <textarea name="commentaire" class="form-control rounded-3 shadow-sm">{{ old('commentaire') }}</textarea>
+                            <textarea name="commentaires" class="form-control rounded-3 shadow-sm">{{ old('commentaires') }}</textarea>
                         </div>
 
                         <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">

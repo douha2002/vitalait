@@ -35,7 +35,7 @@ class UserApprovalNotification extends Notification
         return [
             'user_id' => $this->user->id,
             'user_name' => $this->user->name,
-            'message' => "{$this->user->name} est en attente de validation. "
+            'message' => "{$this->user->name}   est en attente de validation. "
         ];
     }
 
