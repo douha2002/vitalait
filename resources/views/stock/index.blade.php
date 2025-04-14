@@ -39,13 +39,18 @@
             </tr>
         </thead>
         <tbody>
-        
+            @if($stocks->isEmpty())
+            <tr>
+                <td colspan="5" class="text-center">Aucune equipement dans le stock .</td>
+            </tr>
+        @else
             @foreach($stocks as $stock)
             <tr>
                 <td>{{ $stock->sous_categorie }}</td>
                 <td>{{ $stock->quantite }}</td>
             </tr>
             @endforeach
+        @endif
         </tbody>
     </table>
 </div>
@@ -57,7 +62,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Sélectionnez les équipements à ajouter au stock</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="equipementForm">

@@ -50,8 +50,12 @@
                                     <option value="{{ $equipment->numero_de_serie }}" data-statut="{{ $equipment->statut }}">{{ $equipment->numero_de_serie }}</option>
                                 @endforeach
                             </select>
-                            <div id="alert-message" class="mt-2 text-danger fw-bold" style="display: none;">
+                            <div id="alert-message-panne" class="mt-2 text-danger fw-bold" style="display: none;">
                                 Attention: Vous ne pouvez pas affecter cet équipement car il est en panne.
+                            </div>
+                            
+                            <div id="alert-message-affecte" class="mt-2 text-danger fw-bold" style="display: none;">
+                                Attention: Vous ne pouvez pas affecter cet équipement car il est déjà affecté.
                             </div>
                         </div>
 
@@ -141,15 +145,26 @@
                                                     <div class="modal-body">
                                                         <div class="mb-3">
                                                             <label for="equipement" class="fw-semibold">Équipement :</label>
-                                                            <select name="numero_de_serie" id="equipment" class="form-control rounded-3 shadow-sm" required>
+                                                            <select name="numero_de_serie" id="numero_de_serie" class="form-control rounded-3 shadow-sm" required>
                                                                 <option value="" selected disabled>-- Sélectionner un équipement --</option>
-                                                                @foreach($equipments as $equip)
-                                                                    <option value="{{ $equip->numero_de_serie }}" {{ $assignment->numero_de_serie == $equip->numero_de_serie ? 'selected' : '' }}>
-                                                                        {{ $equip->numero_de_serie }}
+                                                                @foreach($equipments as $equipment)
+                                                                    <option value="{{ $equipment->numero_de_serie }}" 
+                                                                            {{ isset($assignment) && $assignment->numero_de_serie == $equipment->numero_de_serie ? 'selected' : '' }} 
+                                                                            data-statut="{{ $equipment->statut }}">
+                                                                        {{ $equipment->numero_de_serie }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
+                                                            
+                                                            <div id="alert-message-panne" class="mt-2 text-danger fw-bold" style="display: none;">
+                                                                Attention: Vous ne pouvez pas affecter cet équipement car il est en panne.
+                                                            </div>
+                                                            
+                                                            <div id="alert-message-affecte" class="mt-2 text-danger fw-bold" style="display: none;">
+                                                                Attention: Vous ne pouvez pas affecter cet équipement car il est déjà affecté.
+                                                            </div>
                                                         </div>
+                                                            
 
                                                         <div class="mb-3">
                                                             <label for="employee" class="fw-semibold">Employé :</label>
@@ -386,21 +401,33 @@
 {{-- Equipement Select JS --}}
 <script>
     $(document).ready(function() {
+        // Lorsque la sélection change
         $('#numero_de_serie').change(function() {
             var selectedOption = $(this).find('option:selected');
-            var statut = selectedOption.data('statut'); // Get the 'statut' attribute of the selected equipment
+            var statut = selectedOption.data('statut'); // Récupérer l'attribut 'statut' de l'équipement sélectionné
 
-            // If the statut is 'En panne', show the warning message
+            // Si le statut est 'En panne', afficher le message d'avertissement
             if (statut === 'En panne') {
-                $('#alert-message').show(); // Display the alert message
-                $('#assign-button').prop('disabled', true); // Disable the assign button to prevent assignment
-            } else {
-                $('#alert-message').hide(); // Hide the alert message
-                $('#assign-button').prop('disabled', false); // Enable the assign button
+                $('#alert-message-panne').show(); // Afficher le message d'alerte
+                $('#alert-message-affecte').hide(); // Masquer l'alerte "Affecté"
+                $('#assign-button').prop('disabled', true); // Désactiver le bouton d'affectation
+            } 
+            // Si le statut est 'Affecté', afficher l'alerte correspondante
+            else if (statut === 'Affecté') {
+                $('#alert-message-affecte').show(); // Afficher l'alerte "Affecté"
+                $('#alert-message-panne').hide(); // Masquer l'alerte "En panne"
+                $('#assign-button').prop('disabled', true); // Désactiver le bouton d'affectation
+            }
+            // Si aucun des deux statuts, activer l'affectation
+            else {
+                $('#alert-message-panne').hide(); // Masquer l'alerte "En panne"
+                $('#alert-message-affecte').hide(); // Masquer l'alerte "Affecté"
+                $('#assign-button').prop('disabled', false); // Activer le bouton d'affectation
             }
         });
     });
 </script>
+
 
 @include('layouts.sidebar')
 

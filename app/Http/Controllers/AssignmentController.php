@@ -7,38 +7,30 @@ use App\Models\Equipement; // Correctly importing Equipement model
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\Stock;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AssignmentController extends Controller
 { 
     // List all assignments with optional search
     public function index(Request $request)
     {
-        // Get assignments, eager load equipment and employee relations
         $assignments = Assignment::with(['equipment', 'employee'])
             ->when($request->search, function ($query) use ($request) {
-                return $query->where('numero_de_serie', 'like', '%' . $request->search . '%')
-                             ->orWhere('employees_id', 'like', '%' . $request->search . '%');
+                $query->whereHas('employee', function ($q) use ($request) {
+                    $q->where('nom', 'like', '%' . $request->search . '%');
+                })
+                ->orWhere('numero_de_serie', 'like', '%' . $request->search . '%');
             })
             ->get();
     
-        // Fetch all equipment and employees
         $equipments = Equipement::all();
         $employees = Employee::all();
     
-        // Pass assignments, equipments, and employees to the view
         return view('assignments.index', compact('assignments', 'equipments', 'employees'));
     }
     
-    // Show the form to create a new assignment
-    public function create()
-    {
-        // Fetch all equipment and employees
-        $equipments = Equipement::all();
-        $employees = Employee::all();
-
-        // Pass them to the view
-        return view('assignments.create', compact('equipments', 'employees'));
-    }
+    
 
     // Store the new assignment
     public function store(Request $request)
@@ -110,12 +102,7 @@ class AssignmentController extends Controller
     // Get the equipment
     $equipment = Equipement::findOrFail($assignment->numero_de_serie);
 
-    // **Prevent assignment if equipment is "En panne" before updating anything**
-    if ($equipment->statut === 'En panne') {
-        return redirect()->route('assignments.index')->withErrors([
-            'error' => 'Vous ne pouvez pas affecter cet équipement car il est en panne.',
-        ]);
-    }
+    
 
     // Check if employee is being changed
     $employeeChanged = $assignment->employees_id !== $request->employees_id;
@@ -247,5 +234,69 @@ public function restore($id)
     $assignment->restore(); // Restore the soft deleted record
     return back()->with('success', 'Affectation restaurée avec succès.');
 }
+
+
+public function getAssignmentsByMonth(Request $request)
+{
+    $year = $request->input('year', date('Y')); // Default to the current year if not specified
+
+    $data = DB::table('assignments')
+        ->join('equipements', 'assignments.numero_de_serie', '=', 'equipements.numero_de_serie')
+        ->whereYear('assignments.date_debut', $year)
+        ->selectRaw('
+            sous_categorie,
+            MONTH(date_debut) as mois,
+            COUNT(*) as total
+        ')
+        ->groupBy('sous_categorie', 'mois')
+        ->get();
+
+    // Initialiser tableau par mois de 1 à 12
+    $labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    $sousCategories = $data->pluck('sous_categorie')->unique();
+    $datasets = [];
+
+    foreach ($sousCategories as $categorie) {
+        $dataset = [
+            'label' => $categorie,
+            'data' => array_fill(0, 12, 0),
+            'backgroundColor' => '#' . substr(md5($categorie), 0, 6),
+        ];
+
+        foreach ($data as $entry) {
+            if ($entry->sous_categorie === $categorie) {
+                $dataset['data'][$entry->mois - 1] = $entry->total;
+            }
+        }
+
+        $datasets[] = $dataset;
+    }
+
+    return response()->json([
+        'labels' => $labels,
+        'datasets' => $datasets,
+    ]);
+}
+
+public function employeeAssignmentPercentage()
+{
+    $totalEmployees = Employee::count(); // Get the total number of employees
+    $assignedEmployees = Employee::whereHas('equipments')->count(); // Get the number of employees with assigned equipment
+
+    $percentage = $totalEmployees ? ($assignedEmployees / $totalEmployees) * 100 : 0;
+
+    return response()->json([
+        'assigned' => $assignedEmployees,
+        'total' => $totalEmployees,
+        'percentage' => $percentage
+    ]);
+}
+
+
+
+
+
+
+
 
 }

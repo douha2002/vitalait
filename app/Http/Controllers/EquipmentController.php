@@ -26,7 +26,7 @@ class EquipmentController extends Controller
         'date_acquisition' => 'required|date',
         'date_de_mise_en_oeuvre' => 'nullable|date',
         'categorie' => 'nullable|string|max:255',
-        'sous_categorie' => 'nullable|string|max:255',
+        'sous_categorie' => 'required|nullable|string|max:255',
         'matricule' => 'nullable|string|max:255',
     ]);
     // Store data in database
@@ -97,10 +97,25 @@ public function import(Request $request)
     $equipment = Equipement::where('numero_de_serie', $numero_de_serie)->firstOrFail();
     \Log::info('Equipment found: ' . $equipment->numero_de_serie);
 
-    if ($equipment->assignments()->exists()) {
-        \Log::info('Equipment has assignments, cannot delete.');
+    // ❌ Block deletion if statut is "Affecté" or "En panne"
+    if (in_array($equipment->statut, ['Affecté', 'En panne'])) {
+        \Log::warning('Cannot delete equipment with statut: ' . $equipment->statut);
         return redirect()->route('equipments.index')
-            ->with('error', 'Impossible de supprimer cet équipement car il est encore assigné.');
+            ->with('error', 'Impossible de supprimer cet équipement car il est "' . $equipment->statut . '".');
+    }
+
+    // ✅ Update stock if statut is "En stock"
+    if ($equipment->statut === 'En stock' && $equipment->sous_categorie) {
+        $stock = \App\Models\Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+        if ($stock) {
+            $stock->quantite = max(0, $stock->quantite - 1);
+            if ($stock->quantite === 0) {
+                $stock->delete();
+            } else {
+                $stock->save();
+            }
+        }
     }
 
     // If statut is "En stock", update stock table
@@ -125,59 +140,31 @@ public function import(Request $request)
 }
 
 
-    public function search(Request $request)
-    {
-        $query = Equipement::query();
 
-        // Filter by Numéro de Série
-        if ($request->filled('numero_de_serie')) {
-            $query->where('numero_de_serie', 'like', '%' . $request->numero_de_serie . '%');
-        }
+public function search(Request $request)
+{
+    $searchTerm = $request->input('search');
 
-        // Filter by Article
-        if ($request->filled('article')) {
-            $query->where('article', 'like', '%' . $request->article . '%');
-        }
+    $query = Equipement::query();
 
-
-
-        // Filter by Date d'Acquisition
-        if ($request->filled('date_acquisition')) {
-            $query->whereDate('date_acquisition', $request->date_acquisition);
-        }
-
-        // Filter by Date de Mise en Oeuvre
-        if ($request->filled('date_de_mise_en_oeuvre')) {
-            $query->whereDate('date_de_mise_en_oeuvre', $request->date_de_mise_en_oeuvre);
-        }
-
-        // Filter by Catégorie
-        if ($request->filled('categorie')) {
-            $query->where('categorie', $request->categorie);
-        }
-
-        // Filter by Sous Catégorie
-        if ($request->filled('sous_categorie')) {
-            $query->where('sous_categorie', 'like', '%' . $request->sous_categorie . '%');
-        }
-         // Filter by Sous Catégorie
-         if ($request->filled('categorie')) {
-            $query->where('categorie', 'like', '%' . $request->sous_categorie . '%');
-        }
-
-        // Filter by Matricule
-        if ($request->filled('matricule')) {
-            $query->where('matricule', 'like', '%' . $request->matricule . '%');
-        }
-
-        // Get the results
-        $equipments = $query->get();
-        $noResults = $equipments->isEmpty();
-
-        // Get categories for the dropdown (if needed)
-        $categories = Category::all();
-
-        return view('equipments.index', compact('equipments', 'categories', 'noResults'));
+    if ($searchTerm) {
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('numero_de_serie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('article', 'like', '%' . $searchTerm . '%')
+              ->orWhere('date_acquisition', 'like', '%' . $searchTerm . '%')
+              ->orWhere('date_de_mise_en_oeuvre', 'like', '%' . $searchTerm . '%')
+              ->orWhere('categorie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('sous_categorie', 'like', '%' . $searchTerm . '%')
+              ->orWhere('matricule', 'like', '%' . $searchTerm . '%');
+        });
     }
+
+    $equipments = $query->get();
+    $noResults = $equipments->isEmpty();
+
+    return view('equipments.index', compact('equipments', 'noResults'));
+}
+
+
     
 }

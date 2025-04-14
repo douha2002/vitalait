@@ -20,4 +20,13 @@ class Employee extends Model
 
     // Define the fillable attributes
     protected $fillable = ['nom', 'email', 'poste']; // Adjust fields accordingly
+
+    
+     // Define the relationship to the Equipement model
+     public function equipments()
+     {
+         return $this->hasMany(Assignment::class, 'employees_id', 'matricule')
+                     ->join('equipements', 'assignments.numero_de_serie', '=', 'equipements.numero_de_serie')
+                     ->select('equipements.*');
+     }
 }

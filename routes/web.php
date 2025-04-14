@@ -7,7 +7,6 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\EquipementImportController;
 use App\Imports\EquipementsImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AssignmentController;
 use App\Models\Assignment;
 use App\Http\Controllers\MaintenanceController;
@@ -17,14 +16,10 @@ use Phpml\Classification\KNearestNeighbors;
 use Illuminate\Http\Request;
 use App\Mail\LowStockAlert;
 use Illuminate\Support\Facades\Mail;
-
-
-
-
-
-
-
-
+use Illuminate\Support\Facades\DB;
+use App\Models\Equipement;
+use App\Http\Controllers\ContratsController;
+use App\Models\Contrat;
 
 
 Route::get('/', function () {
@@ -32,33 +27,6 @@ Route::get('/', function () {
 })->name('welcome');
 
 Auth::routes();
-
-// Add this API route (you can change the URL if needed)
-Route::post('/api/send-stock-alert', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'low_stock_items' => 'required|array'
-    ]);
-    
-    // Convert array to collection of fake Stock models
-    $items = collect($request->low_stock_items)->map(function ($item) {
-        return new class($item) {
-            public function __construct($data) {
-                foreach ($data as $key => $value) {
-                    $this->$key = $value;
-                }
-            }
-        };
-    });
-
-    try {
-        Mail::to($request->email)->send(new LowStockAlert($items));
-        return response()->json(['success' => true]);
-    } catch (\Exception $e) {
-        \Log::error("Email sending failed: " . $e->getMessage());
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-})->middleware('auth'); // Remove this if you want unauthenticated access
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -70,6 +38,7 @@ Route::get('/register', function () {
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [ContratsController::class, 'dashboard'])->name('home');
 
 // Settings route for the admin
 Route::middleware(['auth'])->group(function () {
@@ -89,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/equipments/import', [EquipmentController::class, 'import'])->name('equipments.import'); 
     Route::put('/equipments/{numero_de_serie}', [EquipmentController::class, 'update'])->name('equipments.update');
     Route::delete('/equipments/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
+    Route::get('/equipments/search', [EquipmentController::class, 'search'])->name('search');
 
 });
 Route::middleware(['auth'])->group(function () {
@@ -121,16 +90,40 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::get('/test-ml', function() {
-    $samples = [[1, 3], [1, 4], [2, 4], [3, 1], [4, 1], [4, 2]];
-    $labels = ['a', 'a', 'a', 'b', 'b', 'b'];
-
-    $classifier = new KNearestNeighbors();
-    $classifier->train($samples, $labels);
-
-    return $classifier->predict([3, 2]); // Should return 'b'
+Route::get('/api/equipment-count', function () {
+    return response()->json([
+        'count' => Equipement::count()
+    ]);
 });
 
+Route::get('/api/assignment-count', function () {
+    $count = DB::table('equipements')
+        ->where('statut', '=', 'Affecté')
+        ->count();
+
+    return response()->json(['count' => $count]);
+});
+
+Route::get('/api/maintenance-count', function () {
+    $count = Equipement::whereRaw("LOWER(TRIM(statut)) LIKE ?", ['%en panne%'])->count();
+
+    return response()->json(['count' => $count]);
+});
+
+Route::get('/api/stock-count', function () {
+    return response()->json([
+        'count' => Equipement::where('statut', 'En stock')->count()
+    ]);
+});
+Route::get('/api/equipement-by-sous-categorie', function () {
+    $data = \App\Models\Equipement::select('sous_categorie', \DB::raw('count(*) as total'))
+        ->groupBy('sous_categorie')
+        ->get();
+
+    return response()->json($data);
+});
+Route::get('/api/assignments-by-month', [AssignmentController::class, 'getAssignmentsByMonth']);
+Route::get('/api/employee-assignment-percentage', [AssignmentController::class, 'employeeAssignmentPercentage'])->name('employee.assignment.percentage');
 
 
 

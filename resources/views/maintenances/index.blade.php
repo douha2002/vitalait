@@ -48,7 +48,13 @@
                                 @foreach($equipements as $equipement)
                                     <option value="{{ $equipement->numero_de_serie }}"
                                             data-fournisseur="{{ optional($equipement->contrat)->fournisseur_id }}"
+<<<<<<< HEAD
                                             data-statut="{{ $equipement->statut }}">
+=======
+                                            data-statut="{{ $equipement->statut }}"
+                                            data-date-fin="{{ optional($equipement->contrat)->date_fin }}">
+
+>>>>>>> ff707a9a02ca0702f2af4c2d1d1bc29cb5e1649c
                                         {{ $equipement->numero_de_serie }}
                                     </option>
                                 @endforeach
@@ -78,7 +84,11 @@
                         <!-- Commentaires -->
                         <div class="mb-3">
                             <label class="fw-semibold">Commentaires :</label>
+<<<<<<< HEAD
                             <textarea name="commentaire" class="form-control rounded-3 shadow-sm">{{ old('commentaire') }}</textarea>
+=======
+                            <textarea name="commentaires" class="form-control rounded-3 shadow-sm">{{ old('commentaires') }}</textarea>
+>>>>>>> ff707a9a02ca0702f2af4c2d1d1bc29cb5e1649c
                         </div>
 
                         <div class="modal-footer d-flex justify-content-between bg-light rounded-bottom">
@@ -269,6 +279,7 @@
         const equipementSelect = document.getElementById("equipement");
         if (equipementSelect) {
             equipementSelect.addEventListener("change", function () {
+<<<<<<< HEAD
                 const selected = this.options[this.selectedIndex];
                 const fournisseurId = selected.getAttribute("data-fournisseur");
                 const statut = selected.getAttribute("data-statut");
@@ -291,6 +302,37 @@
                     alertBox.classList.remove("d-none");
                 }
             });
+=======
+    const selected = this.options[this.selectedIndex];
+    const fournisseurId = selected.getAttribute("data-fournisseur");
+    const statut = selected.getAttribute("data-statut");
+    const dateFin = selected.getAttribute("data-date-fin");
+    const alertBox = document.getElementById("contract-alert");
+    const affecteAlert = document.getElementById("affecte-alert");
+
+    alertBox.classList.add("d-none");
+    affecteAlert.classList.add("d-none");
+
+    if (statut === "Affecté") {
+        affecteAlert.classList.remove("d-none");
+    } else {
+        const today = new Date().toISOString().split('T')[0];
+
+        if (fournisseurId && dateFin && dateFin >= today) {
+            // Contrat valide
+            document.getElementById("fournisseur").value = fournisseurId;
+            alertBox.innerHTML = "⚠️ Attention : Cet équipement a un contrat avec le fournisseur sélectionné automatiquement.";
+        } else {
+            // Contrat expiré ou inexistant
+            document.getElementById("fournisseur").value = "";
+            alertBox.innerHTML = "⚠️ Aucun contrat trouvé pour cet équipement. Veuillez sélectionner un fournisseur.";
+        }
+
+        alertBox.classList.remove("d-none");
+    }
+});
+
+>>>>>>> ff707a9a02ca0702f2af4c2d1d1bc29cb5e1649c
         }
     });
 </script>
