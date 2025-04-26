@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Equipement;
 use App\Http\Controllers\ContratsController;
 use App\Models\Contrat;
+use App\Models\Employee;
+use App\Http\Controllers\EmployeController;
+use App\Http\Controllers\FournisseurController;
+
+
 
 
 Route::get('/', function () {
@@ -37,8 +42,7 @@ Route::get('/register', function () {
 })->name('register');
 
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/home', [ContratsController::class, 'dashboard'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Settings route for the admin
 Route::middleware(['auth'])->group(function () {
@@ -53,12 +57,12 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/equipments/search', [EquipmentController::class, 'search'])->name('equipments.search');
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipments.index');
     Route::post('/equipments/store', [EquipmentController::class, 'store'])->name('equipments.store');
     Route::post('/equipments/import', [EquipmentController::class, 'import'])->name('equipments.import'); 
     Route::put('/equipments/{numero_de_serie}', [EquipmentController::class, 'update'])->name('equipments.update');
     Route::delete('/equipments/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
-    Route::get('/equipments/search', [EquipmentController::class, 'search'])->name('search');
 
 });
 Route::middleware(['auth'])->group(function () {
@@ -87,8 +91,46 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
     Route::get('/stock/available', [StockController::class, 'getAvailableEquipments'])->name('stock.available');
     Route::post('/stock/add', [StockController::class, 'addToStock'])->name('stock.add');
+    Route::post('/stock/update-seuil/{sous_categorie}', [StockController::class, 'updateSeuil'])->name('stock.updateSeuil');
+    Route::post('/stock/add', [StockController::class, 'addToStock'])->name('stock.add');
+
 
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/employes/search', [EmployeController::class, 'search'])->name('employes.search');
+    Route::get('/employes', [EmployeController::class, 'index'])->name('employes.index');
+    Route::post('/employes/import', [EmployeController::class, 'import'])->name('employes.import');
+    Route::get('/employes/create', [EmployeController::class, 'create'])->name('employes.create');
+    Route::post('/employes/store', [EmployeController::class, 'store'])->name('employes.store');
+    Route::get('/employes/{matricule}/edit', [EmployeController::class, 'edit'])->name('employes.edit');
+    Route::put('/employes/{matricule}', [EmployeController::class, 'update'])->name('employes.update');
+    Route::delete('/employes/{id}', [EmployeController::class, 'destroy'])->name('employes.destroy');
+    
+    });
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/fournisseurs/search', [FournisseurController::class, 'search'])->name('fournisseurs.search');
+        Route::get('/fournisseurs', [FournisseurController::class, 'index'])->name('fournisseurs.index');
+        Route::post('/fournisseurs/import', [FournisseurController::class, 'import'])->name('fournisseurs.import');
+        Route::get('/fournisseurs/create', [FournisseurController::class, 'create'])->name('fournisseurs.create');
+        Route::post('/fournisseurs/store', [FournisseurController::class, 'store'])->name('fournisseurs.store');
+        Route::get('/fournisseurs/{id}/edit', [FournisseurController::class, 'edit'])->name('fournisseurs.edit');
+        Route::put('/fournisseurs/{id}', [FournisseurController::class, 'update'])->name('fournisseurs.update');
+        Route::delete('/fournisseurs/{id}', [FournisseurController::class, 'destroy'])->name('fournisseurs.destroy');
+        
+        });
+
+        Route::middleware(['auth'])->group(function () {
+            Route::get('/contrats/search', [ContratsController::class, 'search'])->name('contrats.search');
+            Route::get('/contrats', [ContratsController::class, 'index'])->name('contrats.index');
+            Route::post('/contrats/import', [ContratsController::class, 'import'])->name('contrats.import');
+            Route::get('/contrats/create', [ContratsController::class, 'create'])->name('contrats.create');
+            Route::post('/contrats/store', [ContratsController::class, 'store'])->name('contrats.store');
+            Route::get('/contrats/{id}/edit', [ContratsController::class, 'edit'])->name('contrats.edit');
+            Route::put('/contrats/{id}', [ContratsController::class, 'update'])->name('contrats.update');
+            Route::delete('/contrats/{id}', [ContratsController::class, 'destroy'])->name('contrats.destroy');
+            
+            });
 
 Route::get('/api/equipment-count', function () {
     return response()->json([
@@ -122,8 +164,7 @@ Route::get('/api/equipement-by-sous-categorie', function () {
 
     return response()->json($data);
 });
-Route::get('/api/assignments-by-month', [AssignmentController::class, 'getAssignmentsByMonth']);
-Route::get('/api/employee-assignment-percentage', [AssignmentController::class, 'employeeAssignmentPercentage'])->name('employee.assignment.percentage');
+
 
 
 

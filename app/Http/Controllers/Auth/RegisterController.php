@@ -21,26 +21,32 @@ class RegisterController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
+        // Vérifie si c'est le premier utilisateur = admin
+    $isAdmin = User::count() === 0;
+
+    $status = $isAdmin ? 'Approuvé' : 'En attente';
 
         // Create the new user with status 'pending'
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'status' => 'pending',  // Default status is 'En attente'
+            'status' => $status, 
         ]);
 
-        // Notify the admin (ID = 1)
-           $admin = User::find(1);
-       if ($admin) {
-         $admin->notify(new UserApprovalNotification($user));
-}
+        // Seulement notifier l’admin si ce n’est pas lui-même
+    if (!$isAdmin) {
+        $admin = User::find(1); // Supposé être l'admin
+        if ($admin) {
+            $admin->notify(new UserApprovalNotification($user));
+        }
+    }
 
         // Fire the Registered event (if necessary for other purposes)
         event(new Registered($user));
 
         // Redirect to a page or show a success message
-        return redirect()->route('login')->with('status', 'Registration successful. Please wait for approval.');
+        return redirect()->route('login')->with('status', 'Inscription réussie. Veuillez attendre l’approbation.');
     }
     /*
     |--------------------------------------------------------------------------

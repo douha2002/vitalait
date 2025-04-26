@@ -22,6 +22,7 @@ protected $fillable = [
     'name',
     'email',
     'password',
+    'status',
 ];
 
     /**
@@ -46,4 +47,14 @@ protected $fillable = [
             'password' => 'hashed',
         ];
     }
+    public function getStatusFrAttribute(): string
+{
+    return match($this->status) {
+        'approved' => 'Approuvé',
+        'rejected' => 'Rejeté',
+        'pending' => 'En attente',
+        default => 'Inconnu',
+    };
+}
+
 }

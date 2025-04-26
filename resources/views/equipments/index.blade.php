@@ -6,7 +6,7 @@
     <!-- Search Section -->
     <div class="d-flex justify-content-center align-items-center mb-4">
         <div class="search-container w-50">
-            <form method="GET" action="{{ route('search') }}" class="search-form">
+            <form method="GET" action="{{ route('equipments.search') }}" class="search-form">
                 <div class="input-group">
                     <input type="text" name="search" id="search" class="form-control shadow-sm" placeholder="Rechercher par numero de serie, article, etc..">
                     <button type="submit" class="btn btn-outline-secondary shadow-sm"><i class="fas fa-search"></i></button>
@@ -116,7 +116,7 @@
     <!-- Equipment Table -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table class="table table-hover table-bordered">
+            <table id="equipementsTable" class="table table-hover table-bordered">
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center">Numéro de Série</th>
@@ -145,14 +145,18 @@
                                     <span class="badge bg-warning text-dark"><i class="fas fa-thumbs-up"></i> {{ __('Disponible') }}</span>
                                 @elseif ($equipment->statut === 'Affecté')
                                     <span class="badge bg-success"><i class="bi bi-check-lg"></i> {{ __('Affecté') }}</span>
+                                @elseif ($equipment->statut === 'En panne en stock')
+                                <span class="badge" style="background-color: orange; color: white;">
+                                    <i class="bi bi-tools"></i> {{ __('En panne en stock') }}
+                                </span>
                                 @elseif ($equipment->statut === 'En panne')
                                     <span class="badge bg-danger"><i class="bi bi-exclamation-circle"></i> {{ __('En panne') }}</span>
                                 @elseif ($equipment->statut === 'En stock')
                                     <span class="badge bg-primary"><i class="bi bi-box-seam"></i> {{ __('En stock') }}</span>   
                                 @endif
                             </td>                            
-                            <td class="d-flex justify-content-center justify-content-between ">
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
+                            <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
     <i class="fas fa-edit"></i>
 </button>
 
@@ -209,7 +213,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash me-2"></i>
                                     </button>
                                 </form>
                             </td>
@@ -323,7 +327,18 @@
 
 @endif
 
-
+<script>
+    $(document).ready(function () {
+        $('#equipementsTable').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+            },
+            paging: true,
+            searching: false,
+            info: true
+        });
+    });
+</script>
 @include('layouts.sidebar')
 
 @endsection

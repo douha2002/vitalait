@@ -19,7 +19,7 @@ class Employee extends Model
     public $timestamps = false;
 
     // Define the fillable attributes
-    protected $fillable = ['nom', 'email', 'poste']; // Adjust fields accordingly
+    protected $fillable = ['matricule', 'nom', 'prenom','poste','service','email'];
 
     
      // Define the relationship to the Equipement model

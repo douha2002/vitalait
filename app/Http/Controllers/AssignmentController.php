@@ -62,7 +62,13 @@ class AssignmentController extends Controller
               'error' => 'Vous ne pouvez pas affecter cet équipement car il est en panne.',
           ]);
       }
-    
+    // Determine if it was in stock before assignment
+$wasInStock = false;
+$stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+if ($equipment->statut === 'En stock' && $stockItem && $stockItem->quantite > 0) {
+    $wasInStock = true;
+}
         // Create the assignment
         Assignment::create([
             'numero_de_serie' => $request->numero_de_serie,
@@ -72,20 +78,14 @@ class AssignmentController extends Controller
         ]);
     
       
-        if ($request->date_fin) {
-            $equipment->statut = 'Disponible';
-        } else {
-            $equipment->statut = 'Affecté';
-        }
-        $equipment->save();
-
-    // ✅ REMOVE from stock (update quantity)
-    $stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
-
-    if ($stockItem) {
-        $stockItem->quantite = max($stockItem->quantite - 1, 0);
-        $stockItem->save();
-    }
+       // Update equipment status to Affecté
+$equipment->statut = 'Affecté';
+$equipment->save();
+// Remove from stock if it was in stock before
+if ($wasInStock) {
+    $stockItem->quantite = max(0, $stockItem->quantite - 1);
+    $stockItem->save();
+}
     
     
         return redirect()->route('assignments.index')->with('success', 'Équipement affecté avec succès.');
@@ -124,12 +124,17 @@ class AssignmentController extends Controller
     }
 
     // Update the equipment status
-    if ($request->date_fin) {
-        $equipment->statut = 'Disponible';
+    $stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+    if ($stockItem) {
+        $equipment->statut = 'En stock';
+        $stockItem->quantite += 1;
+        $stockItem->save();
     } else {
-        $equipment->statut = 'Affecté';
+        $equipment->statut = 'Disponible';
     }
     $equipment->save();
+    
 
     return redirect()->route('assignments.index')->with('success', 'Affectation modifiée avec succès.');
 }
@@ -157,9 +162,19 @@ public function destroy(Assignment $assignment)
 
     // If the equipment has no active assignments, update its status to "Disponible"
     if (!$hasActiveAssignments) {
-        $equipment->statut = 'Disponible';
-        $equipment->save();
+        $stockItem = Stock::where('sous_categorie', $equipment->sous_categorie)->first();
+
+if ($stockItem) {
+    $equipment->statut = 'En stock';
+    $stockItem->quantite += 1;
+    $stockItem->save();
+} else {
+    $equipment->statut = 'Disponible';
+}
+$equipment->save();
+
     }
+    
 
     return redirect()->route('assignments.index')
                      ->with('success', 'Affectation archivée avec succès.');
@@ -195,26 +210,35 @@ public function search(Request $request)
 {
     $query = Assignment::query();
 
-    // Filter by Numéro de Série
     if ($request->filled('search')) {
-        $query->whereHas('equipment', function ($q) use ($request) {
-            $q->where('numero_de_serie', 'like', '%' . $request->search . '%');
-        })
-        ->orWhereHas('employee', function ($q) use ($request) {
-            $q->where('nom', 'like', '%' . $request->search . '%');
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->whereHas('equipment', function ($q2) use ($search) {
+                $q2->where('numero_de_serie', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('employee', function ($q2) use ($search) {
+                $q2->where('nom', 'like', '%' . $search . '%')
+                   ->orWhere('prenom', 'like', '%' . $search . '%')
+                   ->orWhere('matricule', 'like', '%' . $search . '%');
+            })
+            // Rechercher directement dans les colonnes de assignments
+            ->orWhere('date_debut', 'like', '%' . $search . '%')
+            ->orWhere('date_fin', 'like', '%' . $search . '%');
         });
     }
 
-    // Get the results
     $assignments = $query->get();
     $noResults = $assignments->isEmpty();
 
-    // Retrieve all equipments to ensure they're available in the view
-    $equipments = Equipement::all();  // Corrected variable name here
+    $equipments = Equipement::all();
     $employees = Employee::all();
 
-    return view('assignments.index', compact('assignments', 'equipments', 'employees', 'noResults'));  // Corrected variable name here
+    return view('assignments.index', compact('assignments', 'equipments', 'employees', 'noResults'));
 }
+
+
+
 public function softDelete($id)
 {
     $assignment = Assignment::findOrFail($id);

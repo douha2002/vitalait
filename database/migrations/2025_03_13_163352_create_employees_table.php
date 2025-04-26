@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->string('poste');
-            $table->string('email')->unique();
+            $table->string('service');
+            $table->string('email');
         });
     }
 

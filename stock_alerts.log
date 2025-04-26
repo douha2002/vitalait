@@ -59,3 +59,82 @@
 2025-04-07 12:12:33,260 - INFO - Scheduler started
 2025-04-07 12:25:37,301 - INFO - Arrêt du système...
 2025-04-07 12:25:37,353 - INFO - Scheduler has been shut down
+2025-04-21 17:56:02,954 - INFO - Démarrage du système de surveillance de stock...
+2025-04-21 17:56:03,022 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-21 17:56:03,045 - INFO - Added job "stock_check" to job store "default"
+2025-04-21 17:56:03,112 - INFO - Scheduler started
+2025-04-21 17:58:16,787 - INFO - Arrêt du système...
+2025-04-21 17:58:16,789 - INFO - Scheduler has been shut down
+2025-04-21 17:58:21,357 - INFO - Démarrage du système de surveillance de stock...
+2025-04-21 17:58:21,386 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-21 17:58:21,398 - INFO - Added job "stock_check" to job store "default"
+2025-04-21 17:58:21,400 - INFO - Scheduler started
+2025-04-21 17:59:26,601 - INFO - Arrêt du système...
+2025-04-21 17:59:26,602 - INFO - Scheduler has been shut down
+2025-04-21 17:59:30,423 - INFO - Démarrage du système de surveillance de stock...
+2025-04-21 17:59:30,456 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-21 17:59:30,459 - INFO - Added job "check_low_stock" to job store "default"
+2025-04-21 17:59:30,459 - INFO - Scheduler started
+2025-04-21 18:01:15,571 - INFO - Arrêt du système...
+2025-04-21 18:01:15,619 - INFO - Scheduler has been shut down
+2025-04-21 18:01:16,055 - INFO - Démarrage du système de surveillance de stock...
+2025-04-21 18:01:16,084 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-21 18:01:16,087 - INFO - Added job "check_low_stock" to job store "default"
+2025-04-21 18:01:16,087 - INFO - Scheduler started
+2025-04-21 18:03:16,163 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:03:16 UTC)" (scheduled at 2025-04-21 17:03:16.083784+00:00)
+2025-04-21 18:03:17,092 - WARNING - 8 éléments en stock critique détectés
+2025-04-21 18:03:20,339 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:03:20,447 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:05:16 UTC)" executed successfully
+2025-04-21 18:05:16,127 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:07:16 UTC)" (scheduled at 2025-04-21 17:05:16.083784+00:00)
+2025-04-21 18:05:16,281 - WARNING - 8 éléments en stock critique détectés
+2025-04-21 18:05:21,248 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:05:21,384 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:07:16 UTC)" executed successfully
+2025-04-21 18:07:16,147 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:09:16 UTC)" (scheduled at 2025-04-21 17:07:16.083784+00:00)
+2025-04-21 18:07:16,203 - WARNING - 8 éléments en stock critique détectés
+2025-04-21 18:07:19,871 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:07:19,970 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:09:16 UTC)" executed successfully
+2025-04-21 18:09:16,136 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:11:16 UTC)" (scheduled at 2025-04-21 17:09:16.083784+00:00)
+2025-04-21 18:09:16,334 - WARNING - 8 éléments en stock critique détectés
+2025-04-21 18:09:21,443 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:09:21,661 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:11:16 UTC)" executed successfully
+2025-04-21 18:11:17,302 - WARNING - Run time of job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:13:16 UTC)" was missed by 0:00:01.208268
+2025-04-21 18:12:56,764 - INFO - Arrêt du système...
+2025-04-21 18:12:56,816 - INFO - Scheduler has been shut down
+2025-04-21 18:13:04,035 - INFO - Démarrage du système de surveillance de stock...
+2025-04-21 18:13:04,070 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-04-21 18:13:04,075 - INFO - Added job "check_low_stock" to job store "default"
+2025-04-21 18:13:04,075 - INFO - Scheduler started
+2025-04-21 18:15:04,125 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:15:04 UTC)" (scheduled at 2025-04-21 17:15:04.070517+00:00)
+2025-04-21 18:15:04,642 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:15:08,759 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:15:08,877 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:17:04 UTC)" executed successfully
+2025-04-21 18:17:04,124 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:19:04 UTC)" (scheduled at 2025-04-21 17:17:04.070517+00:00)
+2025-04-21 18:17:04,259 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:17:07,240 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:17:07,349 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:19:04 UTC)" executed successfully
+2025-04-21 18:19:04,133 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:21:04 UTC)" (scheduled at 2025-04-21 17:19:04.070517+00:00)
+2025-04-21 18:19:04,200 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:19:11,859 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:19:12,176 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:21:04 UTC)" executed successfully
+2025-04-21 18:21:04,124 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:23:04 UTC)" (scheduled at 2025-04-21 17:21:04.070517+00:00)
+2025-04-21 18:21:04,278 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:21:07,483 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:21:07,592 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:23:04 UTC)" executed successfully
+2025-04-21 18:23:04,226 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:25:04 UTC)" (scheduled at 2025-04-21 17:23:04.070517+00:00)
+2025-04-21 18:23:04,465 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:23:11,385 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:23:17,976 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:25:04 UTC)" executed successfully
+2025-04-21 18:25:04,716 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:27:04 UTC)" (scheduled at 2025-04-21 17:25:04.070517+00:00)
+2025-04-21 18:25:05,655 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:25:11,891 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:25:12,016 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:27:04 UTC)" executed successfully
+2025-04-21 18:27:04,126 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:29:04 UTC)" (scheduled at 2025-04-21 17:27:04.070517+00:00)
+2025-04-21 18:27:04,241 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:27:09,170 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:27:09,300 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:29:04 UTC)" executed successfully
+2025-04-21 18:29:04,167 - INFO - Running job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:29:04 UTC)" (scheduled at 2025-04-21 17:29:04.070517+00:00)
+2025-04-21 18:29:04,298 - WARNING - 7 éléments nécessitant réapprovisionnement
+2025-04-21 18:29:08,648 - INFO - Email envoyé à douha.hm17@gmail.com
+2025-04-21 18:29:08,806 - INFO - Job "check_low_stock (trigger: interval[0:02:00], next run at: 2025-04-21 17:31:04 UTC)" executed successfully
+2025-04-21 18:29:39,615 - INFO - Arrêt du système...
+2025-04-21 18:29:39,675 - INFO - Scheduler has been shut down

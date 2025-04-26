@@ -21,16 +21,18 @@
         /* Custom Styles */
         #sidebar {
             width: 250px;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000; /* Ensure sidebar is above other content */
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            background-color: #343a40; /* Dark background for sidebar */
-            color: white;
-            padding: 20px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1e1e2f, #2a2a3f);
+    color: white;
+    padding: 20px;
+    border-right: 1px solid #444;
+    border-radius: 0 10px 10px 0;
         }
 
         #sidebar.active {
@@ -38,16 +40,21 @@
         }
 
         #sidebarToggle {
-            z-index: 1001; /* Ensure button is above the sidebar */
-            position: fixed;
-            top: 10px;
-            left: 10px;
+            z-index: 1001;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 8px 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
         .main-content {
             margin-left: 0;
-            transition: margin-left 0.3s ease-in-out;
-            padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+    padding: 20px;
         }
 
         .main-content.sidebar-active {
@@ -55,17 +62,27 @@
         }
 
         .dropdown-menu {
-            background-color: #343a40; /* Dark background for dropdown */
-            border: none;
-        }
+    background-color: #2a2a3f;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+}
 
-        .dropdown-item {
-            color: #fff; /* White text for dropdown items */
-        }
+        ul.list-unstyled li a,
+.dropdown-item {
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
 
-        .dropdown-item:hover {
-            background-color: #495057; /* Darker background on hover */
-        }
+ul.list-unstyled li a:hover,
+.dropdown-item:hover {
+    background-color: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+.dropdown-toggle::after {
+    margin-left: auto;
+}
     </style>
 </head>
 <body>
@@ -86,54 +103,62 @@
             <h4 class="text-center mb-4">{{ __('') }}</h4>
             <ul class="list-unstyled">
                 <li class="mb-3">
-                    <a href="{{ route('home') }}" class="text-white text-decoration-none">
-                        <i class="fas fa-home me-2"></i> Acceuil
+                    <a href="{{ route('home') }}" class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="fas fa-home me-2 text-info"></i> Accueil
                     </a>
                 </li>
+            
                 <li class="mb-3">
-                    <a href="{{ route('equipments.index') }}" class="text-white text-decoration-none">
-                        <i class="fas fa-network-wired me-2"></i> Equipements
-                    </a>
-                </li>
-                <li class="mb-3">
-                    <a href="{{ route('assignments.index') }}" class="text-white text-decoration-none">
-                        <i class="fas fa-users me-2"></i> Affectation
-                    </a>
-                </li>
-                <li class="mb-3">
-                    <a href="{{ route('maintenances.index') }}" class="text-white text-decoration-none">
-                        <i class="fas fa-wrench me-2"></i> Maintenances
-                    </a>
-                </li>
-                <li class="mb-3">
-                    <a href="{{ route('stock.index')}}" class="text-white text-decoration-none">
-                        <i class="fas fa-box-archive me-2"></i> Stock
-                    </a>
-                </li>
-
-                <li class="mb-3">
-                    <!-- User Dropdown -->
                     <div class="dropdown">
-                        <button class="btn btn-dark dropdown-toggle w-100 text-start" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user me-2"></i> {{ Auth::user()->name }}
+                        <button class="btn btn-dark dropdown-toggle w-100 text-start d-flex align-items-center justify-content-between" type="button" id="equipementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span><i class="fas fa-network-wired me-2 text-light"></i> Équipements</span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{{ route('settings') }}"><i class="fas fa-cog me-2"></i> Paramètres </a></li>
-                            <!-- Logout Link -->
+                        <ul class="dropdown-menu shadow w-100 mt-2" aria-labelledby="equipementDropdown">
+                            <li><a class="dropdown-item d-flex align-items-center" href="{{ route('equipments.index') }}"><i class="fas fa-desktop me-2 text-primary"></i> Équipements</a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="{{ route('employes.index') }}"><i class="fas fa-users me-2 text-success"></i> Employés</a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="{{ route('fournisseurs.index') }}"><i class="fas fa-truck me-2 text-warning"></i> Fournisseurs</a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="{{ route('contrats.index') }}"><i class="fas fa-file-contract me-2 text-info"></i> Contrats</a></li>
+                        </ul>
+                    </div>
+                </li>
+            
+                <li class="mb-3">
+                    <a href="{{ route('assignments.index') }}" class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="fas fa-random me-2 text-warning"></i> Affectation
+                    </a>
+                </li>
+            
+                <li class="mb-3">
+                    <a href="{{ route('maintenances.index') }}" class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="fas fa-tools me-2 text-danger"></i> Maintenances
+                    </a>
+                </li>
+            
+                <li class="mb-3">
+                    <a href="{{ route('stock.index') }}" class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="fas fa-boxes me-2 text-secondary"></i> Stock
+                    </a>
+                </li>
+            
+                <li class="mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle w-100 text-start d-flex align-items-center justify-content-between" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span><i class="fas fa-user-circle me-2 text-light"></i> {{ Auth::user()->name }}</span>
+                        </button>
+                        <ul class="dropdown-menu shadow w-100 mt-2" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item d-flex align-items-center" href="{{ route('settings') }}"><i class="fas fa-cog me-2 text-primary"></i> Paramètres</a></li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                             document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item d-flex align-items-center text-danger" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt me-2"></i> Déconnecter
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                             </li>
                         </ul>
                     </div>
                 </li>
             </ul>
+            
         </div>
     </div>
 

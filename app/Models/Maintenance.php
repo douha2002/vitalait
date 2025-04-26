@@ -10,8 +10,9 @@ class Maintenance extends Model
     protected $fillable = [
         'numero_de_serie',
         'fournisseur_id',
-        'date_debut',
-        'date_fin',
+        'date_panne',
+        'date_affectation',
+        'date_reception',
         'commentaires',
     ];
 

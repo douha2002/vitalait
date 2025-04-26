@@ -54,13 +54,13 @@ class LoginController extends Controller
         }
 
          // ❌ Block responsables if their status is pending
-        if ($user->status === 'pending') {
+        if ($user->status === 'En attente') {
             Auth::logout();
             return redirect()->route('login')->withErrors([
                 'email' => 'Votre compte est en attente d\'approbation.',
             ]);
         }
-        if ($user->status === 'rejected') {
+        if ($user->status === 'Rejeté') {
             Auth::logout();
             return redirect()->back()->withErrors(['email' => 'Votre compte a été rejeté. Contactez l\'administrateur.']);
         }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Category;
 use App\Models\Assignment;
 use App\Models\maintenance;
+use App\Models\Stock;
 
 class Equipement extends Model
 {
@@ -63,6 +64,11 @@ public function maintenances()
 {
     return $this->hasMany(Maintenance::class, 'numero_de_serie', 'numero_de_serie');
 }
+public function stock()
+{
+    return $this->belongsTo(Stock::class, 'sous_categorie', 'sous_categorie');
+}
+
 public function markAsAssigned()
 {
     if ($this->statut !== 'Affecté') {
@@ -88,10 +94,16 @@ protected static function boot()
             return;
         }
 
+        $maintenance = $equipment->maintenances()->latest()->first();
+
         // Vérifie si l'équipement est en maintenance
-        if ($equipment->hasActiveMaintenances()) {
-            $equipment->statut = 'En panne';
-        } 
+        if ($maintenance && $maintenance->date_debut && !$maintenance->date_reception && !$maintenance->date_fin) {
+        $equipment->statut = 'En panne en stock';
+    } elseif ($maintenance && $maintenance->date_reception && !$maintenance->date_fin) {
+        $equipment->statut = 'En panne';
+    } elseif ($maintenance && $maintenance->date_fin) {
+        $equipment->statut = 'En stock'; // Repaired and returned to stock
+    }
         // Sinon, vérifie s'il est affecté
         elseif ($equipment->hasActiveAssignments()) {
             $equipment->statut = 'Affecté';
@@ -101,5 +113,7 @@ protected static function boot()
             $equipment->statut = 'Disponible';
         }
     });
+
 }
+
 }

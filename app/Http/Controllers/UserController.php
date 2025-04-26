@@ -90,7 +90,7 @@ class UserController extends Controller
 
         // Delete the user
         $user->delete();
-        return redirect()->route('settings')->with('success', 'Utilisateur supprime avec succès.');
+        return redirect()->route('settings')->with('success', 'Utilisateur supprimé avec succès.');
     }
 
     // Approve a user

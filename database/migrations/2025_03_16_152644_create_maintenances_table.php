@@ -13,8 +13,9 @@ return new class extends Migration {
         $table->foreign('numero_de_serie')->references('numero_de_serie')->on('equipements')->onDelete('cascade');
         $table->unsignedBigInteger('fournisseur_id')->nullable(); // Supplier ID
         $table->foreign('fournisseur_id')->references('id')->on('fournisseurs')->onDelete('set null');
-        $table->date('date_debut');
-        $table->date('date_fin')->nullable();
+        $table->date('date_panne');
+        $table->date('date_affectation')->nullable();
+        $table->date('date_reception')->nullable();
         $table->text('commentaires')->nullable();
         $table->timestamps();
     });

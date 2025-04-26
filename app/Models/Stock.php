@@ -8,5 +8,5 @@ class Stock extends Model
 {
     use HasFactory;
     protected $table = 'stock';
-    protected $fillable = ['sous_categorie', 'quantite'];
+    protected $fillable = ['article','sous_categorie', 'quantite','seuil_min'];
 }

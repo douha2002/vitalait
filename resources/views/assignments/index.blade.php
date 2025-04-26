@@ -43,6 +43,15 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
+                            <label for="sous_categorie" class="fw-semibold">Sous catégorie :</label>
+                            <select name="sous_categorie" id="sous_categorie" class="form-control rounded-3 shadow-sm" required>
+                                <option value="" selected disabled>-- Sélectionner un équipement par sous catégorie --</option>
+                                @foreach($equipments->pluck('sous_categorie')->unique() as $sousCategorie)
+                                    <option value="{{ $sousCategorie }}">{{ $sousCategorie }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="numero_de_serie" class="fw-semibold">Équipement :</label>
                             <select name="numero_de_serie" id="numero_de_serie" class="form-control rounded-3 shadow-sm" required>
                                 <option value="" selected disabled>-- Sélectionner un équipement --</option>
@@ -64,7 +73,7 @@
                             <select name="employees_id" id="employees_id" class="form-control rounded-3 shadow-sm" required>
                                 <option value="" selected disabled>-- Sélectionner un employé --</option>
                                 @foreach($employees as $employee)
-                                    <option value="{{ $employee->matricule }}">{{ $employee->nom }} {{ $employee->prenom }}</option>
+                                    <option value="{{ $employee->matricule }}">{{ $employee->nom }} {{ $employee->prenom }} - {{ $employee->matricule }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -90,7 +99,7 @@
     <!-- Assignments Table -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table class="table table-hover table-bordered">
+            <table id="assignmentsTable" class="table table-hover table-bordered">
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center">
@@ -112,18 +121,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($assignments->isEmpty())
-                        <tr>
-                            <td colspan="5" class="text-center">Aucune affectation trouvée.</td>
-                        </tr>
-                    @else
-                        @foreach($assignments as $assignment)
+                    
+                        @forelse($assignments as $assignment)
                             <tr>
                                 <td class="text-center">{{ $assignment->equipment->numero_de_serie ?? 'N/A' }}</td>
-                                <td class="text-center">{{ $assignment->employee->nom ?? 'N/A' }} {{ $assignment->employee->prenom ?? 'N/A' }}</td>
+                                <td class="text-center">{{ $assignment->employee->nom ?? 'N/A' }} {{ $assignment->employee->prenom ?? 'N/A' }} - {{ $assignment->employee->matricule ?? 'N/A' }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($assignment->date_debut)->format('d-m-Y') }}</td>
                                 <td class="text-center">{{ $assignment->date_fin ? \Carbon\Carbon::parse($assignment->date_fin)->format('d-m-Y') : 'En cours' }}</td>
-                                <td class="d-flex justify-content-center justify-content-between ">
+                                <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
                                     <!-- Edit Button -->
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
                                         <i class="fas fa-edit"></i>
@@ -206,8 +211,8 @@
                                     <form action="{{ route('assignments.destroy', $assignment->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette affectation ?');">
-                                            <i class="fas fa-trash"></i>
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet affectation ?');">
+                                            <i class="fas fa-trash me-2"></i>
                                         </button>
                                     </form>
 
@@ -216,7 +221,8 @@
                                         <i class="fas fa-history"></i>
                                     </button>
                                     @foreach ($assignments as $assignment)
-    <!-- Modal -->
+                                    <!-- Modal -->
+                                    
     <div class="modal fade" id="historyModal{{ $assignment->equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -325,15 +331,13 @@
         </div>
     </div>
 @endforeach
-
-                                    
-                                    
-
-                                    
-                                </td>
+                        </td>
                             </tr>
-                        @endforeach
-                    @endif
+                            @empty
+                            <tr>
+                                <td colspan="9" class="text-center">Aucun équipement trouvé.</td>
+                            </tr>
+                        @endforelse    
                 </tbody>
             </table>
         </div>
@@ -427,6 +431,43 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#assignmentsTable').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+            },
+            paging: true,
+            searching: false,
+            info: true
+        });
+    });
+</script>
+<script>
+    // Regrouper les équipements par sous catégorie
+    const allEquipments = @json($equipments);
+
+    const sousCategorieSelect = document.getElementById('sous_categorie');
+    const numeroDeSerieSelect = document.getElementById('numero_de_serie');
+
+    sousCategorieSelect.addEventListener('change', function () {
+        const selectedSousCategorie = this.value;
+
+        // Nettoyer la liste des numéros de série
+        numeroDeSerieSelect.innerHTML = '<option value="" selected disabled>-- Sélectionner un équipement --</option>';
+
+        // Filtrer et ajouter les équipements correspondants
+        allEquipments.forEach(equipment => {
+            if (equipment.sous_categorie === selectedSousCategorie) {
+                const option = document.createElement('option');
+                option.value = equipment.numero_de_serie;
+                option.textContent = equipment.numero_de_serie;
+                numeroDeSerieSelect.appendChild(option);
+            }
+        });
+    });
+</script>
+
 
 
 @include('layouts.sidebar')

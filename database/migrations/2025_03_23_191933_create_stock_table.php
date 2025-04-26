@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('stock', function (Blueprint $table) {
             $table->id();
+            $table->string('article')->unique();
             $table->string('sous_categorie')->unique();
             $table->integer('quantite')->default(0);
+            $table->integer('seuil_min')->default(1);
             $table->timestamps();
         });
     }

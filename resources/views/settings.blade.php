@@ -10,34 +10,37 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-bell"></i> 
-                @if(auth()->user()->unreadNotifications->count() > 0)
+                @if(auth()->user()->unreadNotifications->count())
                     <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
                 @endif
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
                 @forelse(auth()->user()->unreadNotifications as $notification)
-                    <li class="dropdown-item d-flex justify-content-between align-items-center">
-                        <span>{{ $notification->data['message'] }}</span>
-                        <div>
-                            <!-- Approve Form -->
-                            <form action="{{ route('settings.approve',['id' => $notification->data['user_id']]) }}" method="POST" class="d-inline-block">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="bi bi-check-circle"></i> Approuver
-                                </button>
-                            </form>
+                    @php $notifUserId = $notification->data['user_id']; @endphp
+                    @if($notifUserId != auth()->id()) <!-- 💡 Empêche l'auto-validation -->
+                        <li class="dropdown-item d-flex justify-content-between align-items-center">
+                            <span>{{ $notification->data['message'] }}</span>
+                            <div class="ms-2 d-flex gap-1">
+                                <!-- Approve Form -->
+                                <form action="{{ route('settings.approve', ['id' => $notifUserId]) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-success btn-sm" title="Approuver">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                </form>
 
-                            <!-- Reject Form -->
-                            <form action="{{ route('settings.reject',['id' => $notification->data['user_id']]) }}" method="POST" class="d-inline-block">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="bi bi-x-circle"></i> Rejeter
-                                </button>
-                            </form>
-                        </div>
-                    </li>
+                                <!-- Reject Form -->
+                                <form action="{{ route('settings.reject', ['id' => $notifUserId]) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Rejeter">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    @endif
                 @empty
                     <li class="dropdown-item text-muted text-center">
                         {{ __('Aucune notification') }}
@@ -47,6 +50,7 @@
         </li>
     </ul>
 </nav>
+
 
 <!-- Main Content -->
 <div class="container py-2 mt-1">
@@ -119,11 +123,11 @@
                             <td class="align-middle">{{ $user->name }}</td>
                             <td class="align-middle">{{ $user->email }}</td>
                             <td class="align-middle">
-                                @if ($user->status === 'pending')
+                                @if ($user->status === 'En attente')
                                     <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> {{ __('En attente') }}</span>
-                                @elseif ($user->status === 'approved')
+                                @elseif ($user->status === 'Approuvé')
                                     <span class="badge bg-success"><i class="bi bi-check-lg"></i> {{ __('Approuvé') }}</span>
-                                @elseif ($user->status === 'rejected')
+                                @elseif ($user->status === 'Rejeté')
                                     <span class="badge bg-danger"><i class="bi bi-x-lg"></i> {{ __('Rejeté') }}</span>
                                 @endif
                             </td>
