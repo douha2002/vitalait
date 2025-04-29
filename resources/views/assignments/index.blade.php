@@ -122,14 +122,15 @@
                 </thead>
                 <tbody>
                     
-                        @forelse($assignments as $assignment)
+                        @foreach($assignments as $assignment)
                             <tr>
                                 <td class="text-center">{{ $assignment->equipment->numero_de_serie ?? 'N/A' }}</td>
                                 <td class="text-center">{{ $assignment->employee->nom ?? 'N/A' }} {{ $assignment->employee->prenom ?? 'N/A' }} - {{ $assignment->employee->matricule ?? 'N/A' }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($assignment->date_debut)->format('d-m-Y') }}</td>
                                 <td class="text-center">{{ $assignment->date_fin ? \Carbon\Carbon::parse($assignment->date_fin)->format('d-m-Y') : 'En cours' }}</td>
-                                <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
-                                    <!-- Edit Button -->
+                                <td class="text-center"> 
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <!-- Edit Button -->
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editAssignmentModal{{ $assignment->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -333,11 +334,8 @@
 @endforeach
                         </td>
                             </tr>
-                            @empty
-                            <tr>
-                                <td colspan="9" class="text-center">Aucun équipement trouvé.</td>
-                            </tr>
-                        @endforelse    
+                            
+                        @endforeach  
                 </tbody>
             </table>
         </div>

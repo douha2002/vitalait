@@ -40,6 +40,17 @@
 
                     <form action="{{ route('maintenances.store') }}" method="POST">
                         @csrf
+                        <div class="mb-3">
+                            <label for="sous_categorie" class="fw-semibold">Sous catégorie :</label>
+                            <select name="sous_categorie" id="sous_categorie" class="form-control rounded-3 shadow-sm" required>
+                                <option value="" selected disabled>-- Sélectionner une sous-catégorie --</option>
+                                @foreach($equipements->pluck('sous_categorie')->unique() as $sousCategorie)
+                                    @if($sousCategorie) <!-- éviter les valeurs nulles -->
+                                        <option value="{{ $sousCategorie }}">{{ $sousCategorie }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
                         <!-- Équipement -->
                         <div class="mb-3">
                             <label for="equipement" class="fw-semibold">Équipement :</label>
@@ -48,14 +59,9 @@
                                 @foreach($equipements as $equipement)
                                     <option value="{{ $equipement->numero_de_serie }}"
                                             data-fournisseur="{{ optional($equipement->contrat)->fournisseur_id }}"
-
-
                                             data-statut="{{ $equipement->statut }}"
                                             data-statut="{{ $equipement->statut }}"
                                             data-date-fin="{{ optional($equipement->contrat)->date_fin }}">
-
-
-
                                         {{ $equipement->numero_de_serie }}
                                     </option>
                                 @endforeach
@@ -108,17 +114,17 @@
             <table id="maintenancesTable" class="table table-hover table-bordered">
                 <thead class="thead-light">
                     <tr class="text-center">
-                      <th>Équipement</th>         <!-- 1 -->
-                      <th>Fournisseur</th>        <!-- 2 -->
-                      <th>Date de Panne</th>      <!-- 3 -->
-                      <th>Date d'affectation</th>  <!-- 4 -->
-                      <th>Date de Réception</th>        <!-- 5 -->
-                      <th>Commentaires</th>       <!-- 6 -->
-                      <th>Actions</th>            <!-- 7 -->
+                      <th class="text-center"><i class="fas fa-laptop"></i> Équipement</th>         <!-- 1 -->
+                      <th class="text-center"><i class="fas fa-truck"></i> Fournisseur</th>        <!-- 2 -->
+                      <th class="text-center"><i class="fas fa-triangle-exclamation"></i> Date de Panne</th>      <!-- 3 -->
+                      <th class="text-center"><i class="fas fa-random"></i> Date d'affectation</th>  <!-- 4 -->
+                      <th class="text-center"><i class="fa-solid fa-rotate-left"></i> Date de Réception</th>        <!-- 5 -->
+                      <th class="text-center"><i class="fas fa-comments"></i> Commentaires</th>       <!-- 6 -->
+                      <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>            <!-- 7 -->
                     </tr>
                   </thead> 
                 <tbody>
-            @forelse($maintenances as $maintenance)
+            @foreach($maintenances as $maintenance)
             <tr>
                 <td class="text-center">{{ $maintenance->numero_de_serie }}</td>
                 <td class="text-center">{{ $maintenance->fournisseur->nom }}</td>
@@ -128,8 +134,8 @@
                 </td>
                 <td class="text-center">{{ $maintenance->date_reception ? \Carbon\Carbon::parse($maintenance->date_reception)->format('d-m-Y') : 'En cours' }}</td>
                 <td class="text-center">{{ $maintenance->commentaires ?? "Aucun commentaire" }}</td>
-                <td class="text-center"> <!-- Actions --> 
-                                <div class="d-flex justify-content-center gap-2">
+                <td class="text-center"> 
+                    <div class="d-flex justify-content-center gap-2">
                                   <!-- Edit Button -->
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editMaintenanceModal{{ $maintenance->id }}">
                                     <i class="fas fa-edit"></i>
@@ -212,11 +218,7 @@
 
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Aucune maintenance trouvée.</td>
-                        </tr>
-                    @endforelse                    
+                    @endforeach                 
                 </tbody>
             </table>
         </div>
@@ -327,5 +329,39 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const allEquipements = @json($equipements);
+        const sousCategorieSelect = document.getElementById('sous_categorie');
+        const equipementSelect = document.getElementById('equipement'); // corrected here!!
+
+        if (sousCategorieSelect && equipementSelect) {
+            sousCategorieSelect.addEventListener('change', function () {
+                const selectedSousCategorie = this.value;
+
+                // Réinitialiser la liste des équipements
+                equipementSelect.innerHTML = '<option value="" selected disabled>-- Sélectionnez un équipement --</option>';
+
+                if (selectedSousCategorie) {
+                    const filteredEquipements = allEquipements.filter(e => e.sous_categorie === selectedSousCategorie);
+
+                    filteredEquipements.forEach(equipement => {
+                        const option = document.createElement('option');
+                        option.value = equipement.numero_de_serie;
+                        option.textContent = equipement.numero_de_serie;
+                        option.setAttribute('data-fournisseur', equipement.contrat?.fournisseur_id || '');
+                        option.setAttribute('data-statut', equipement.statut || '');
+                        option.setAttribute('data-date-fin', equipement.contrat?.date_fin || '');
+                        equipementSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+
+
+
 @include('layouts.sidebar')
 @endsection

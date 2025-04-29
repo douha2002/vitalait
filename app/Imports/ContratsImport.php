@@ -13,8 +13,10 @@ class ContratsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
+        \Log::debug('Processing row: ', $row);
+
         $numero_de_serie = trim($row['numero_de_serie'] ?? '');
-        $fournisseur_nom = trim($row['fournisseur_id'] ?? ''); // This contains the fournisseur's name from Excel
+        $fournisseur_nom = trim($row['fournisseur'] ?? ''); // This contains the fournisseur's name from Excel
         $date_debut_raw = trim($row['date_debut'] ?? '');
         $date_fin_raw = trim($row['date_fin'] ?? '');
 
@@ -35,11 +37,15 @@ class ContratsImport implements ToModel, WithHeadingRow
         }
         $fournisseur_id = $fournisseur->id;
 
-        // Check if contract already exists
-        if (Contrat::where('numero_de_serie', $numero_de_serie)->exists()) {
-            $this->errors[] = "Le contrat avec l'équipement <strong>$numero_de_serie</strong> existe déjà.";
-            return null;
-        }
+        // Check if exactly same contract already exists (same numero_de_serie + date_debut + date_fin)
+if (Contrat::where('numero_de_serie', $numero_de_serie)
+->where('date_debut', $date_debut)
+->where('date_fin', $date_fin)
+->exists()) {
+$this->errors[] = "Le contrat pour <strong>$numero_de_serie</strong> avec les mêmes dates existe déjà.";
+return null;
+}
+
 
         try {
             Contrat::create([
@@ -60,24 +66,24 @@ class ContratsImport implements ToModel, WithHeadingRow
 
     // Enhanced date conversion to handle different formats
     private function convertDate($date)
-    {
-        $formats = ['d/m/Y', 'd-n-Y', 'd-m-Y', 'j/n/Y', 'j/n/y', 'Y-m-d'];
+{
+    $formats = ['m/d/Y', 'd/m/Y', 'd-n-Y', 'd-m-Y', 'j/n/Y', 'j/n/y', 'Y-m-d'];
 
-        foreach ($formats as $format) {
-            try {
-                return Carbon::createFromFormat($format, $date)->format('Y-m-d');
-            } catch (\Exception $e) {
-                // Continue if the date doesn't match the format
-            }
-        }
-
-        // Final attempt: try parsing the date with Carbon's flexible parser
+    foreach ($formats as $format) {
         try {
-            return Carbon::parse($date)->format('Y-m-d');
+            return Carbon::createFromFormat($format, $date)->format('Y-m-d');
         } catch (\Exception $e) {
-            throw new \Exception("Date format is invalid: '$date'");
+            // Continue if the date doesn't match the format
         }
     }
+
+    // Final attempt: try parsing the date with Carbon's flexible parser
+    try {
+        return Carbon::parse($date)->format('Y-m-d');
+    } catch (\Exception $e) {
+        throw new \Exception("Date format is invalid: '$date'");
+    }
+}
 
     public function getErrors()
     {

@@ -116,7 +116,7 @@
     <!-- Equipment Table -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table id="equipementsTable" class="table table-hover table-bordered">
+            <table id="equipementsTable" class="table table-hover  table-bordered" style="border-collapse: collapse; width: 100%;">
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center">Numéro de Série</th>
@@ -127,11 +127,11 @@
                         <th class="text-center">Sous Catégorie</th>
                         <th class="text-center">Matricule</th>
                         <th class="text-center"><i class="bi bi-shield-lock"></i> Statut</th>
-                        <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
+                        <th class="text-center" ><i class="fas fa-cogs"></i> Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($equipments as $equipment)
+                    @foreach($equipments as $equipment)
                         <tr>
                             <td class="text-center">{{ $equipment->numero_de_serie }}</td>
                             <td class="text-center">{{ $equipment->article ?: '-' }}</td>
@@ -155,10 +155,12 @@
                                     <span class="badge bg-primary"><i class="bi bi-box-seam"></i> {{ __('En stock') }}</span>   
                                 @endif
                             </td>                            
-                            <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
+                            <td class="text-center"> 
+                                <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEquipmentModal{{ $equipment->numero_de_serie }}">
-    <i class="fas fa-edit"></i>
-</button>
+                                <i class="fas fa-edit"></i>
+                               </button>
+ 
 
 <!-- Edit Equipment Modal -->
 <div class="modal fade" id="editEquipmentModal{{ $equipment->numero_de_serie }}" tabindex="-1" aria-labelledby="editEquipmentModalLabel{{ $equipment->numero_de_serie }}" aria-hidden="true">
@@ -207,25 +209,27 @@
         </div>
     </div>
 </div>
-
-                                <!-- Delete Button -->
-                                <form action="{{ route('equipments.destroy', $equipment->numero_de_serie) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
-                                        <i class="fas fa-trash me-2"></i>
-                                    </button>
-                                </form>
+<!-- Delete Button -->
+<form action="{{ route('equipments.destroy', $equipment->numero_de_serie) }}" method="POST" style="display: inline;">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+        <i class="fas fa-trash me-2"></i>
+    </button>
+</form>
                             </td>
                         </tr>
-                    @empty
-                        <tr><td colspan="9" class="text-center">Aucun équipement trouvé.</td></tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+
+
+                               
+                  
 
 {{-- Success Message --}}
 @if(session('success'))

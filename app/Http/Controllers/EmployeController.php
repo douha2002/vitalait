@@ -14,7 +14,7 @@ class EmployeController extends Controller
 {
     public function index()
     {
-        $employes = Employee::paginate(10);
+        $employes = Employee::all();
         return view('employes.index', compact('employes'));
     }
 
@@ -110,5 +110,5 @@ public function destroy($id)
     
         return view('employes.index', compact('employes', 'noResults'));
     }
-    
+ 
 }

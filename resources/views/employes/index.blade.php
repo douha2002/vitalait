@@ -136,7 +136,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($employes as $employe)
+                @foreach($employes as $employe)
                     <tr>
                         <td class="text-center">{{ $employe->matricule }}</td>
                         <td class="text-center">{{ $employe->nom }}</td>
@@ -144,8 +144,9 @@
                         <td class="text-center">{{ $employe->poste }}</td>
                         <td class="text-center">{{ $employe->service }}</td>
                         <td class="text-center">{{ $employe->email }}</td>
-                        <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEmployeModal{{ $employe->matricule }}">
+                        <td class="text-center"> 
+                            <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEmployeModal{{ $employe->matricule }}">
         <i class="fas fa-edit"></i>
     </button>
                             <!-- Edit Employee Modal -->
@@ -198,11 +199,7 @@
                             </div>
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="9" class="text-center">Aucun équipement trouvé.</td>
-                    </tr>
-                @endforelse 
+                @endforeach
             </tbody>
         </table>
     </div>

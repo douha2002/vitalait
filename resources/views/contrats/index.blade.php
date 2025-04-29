@@ -42,7 +42,7 @@
         <div class="modal-content">
             <div class="modal-content shadow-lg">
 <!-- Modal Header -->
-<div class="modal-header bg-primary text-white">
+<div class="modal-header bg-success text-white">
 <h5 class="modal-title" id="importModalLabel">
     <i class="fas fa-file-csv me-2"></i> 
     Importer un fichier CSV
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-success">
                         <i class="fas fa-upload me-2"></i>Importer
 
                     </button>
@@ -145,19 +145,15 @@
                 </tr>
             </thead>
             <tbody>
-                @if($contrats->isEmpty())
-                <tr>
-                    <td colspan="5" class="text-center">Aucune Contrat trouvée.</td>
-                </tr>
-            @else
                 @foreach($contrats as $contrat)
                     <tr>
                         <td class="text-center">{{ $contrat->numero_de_serie }}</td>
                         <td class="text-center">{{ $contrat->fournisseur->nom }}</td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($contrat->date_debut)->format('d-m-Y') }}</td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($contrat->date_fin)->format('d-m-Y') }}</td>
-                        <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editContratModal{{ $contrat->id }}">
+                        <td class="text-center"> 
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editContratModal{{ $contrat->id }}">
                                <i class="fas fa-edit"></i>
                             </button>
                             <!-- Edit Contrat Modal -->
@@ -238,7 +234,6 @@
                         </td>
                     </tr>
                 @endforeach
-                @endif
             </tbody>
         </table>
     </div>
@@ -279,7 +274,7 @@
                         if (successMessage) {
                             successMessage.style.transition = "opacity 0.5s";
                             successMessage.style.opacity = "1";
-                            setTimeout(() => successMessage.remove(), 5000); // Remove after 5 seconds
+                            setTimeout(() => successMessage.remove(), 3000); // Remove after 5 seconds
                         }
                     }, 500);
                 }, 3000); // Wait for 3 seconds before hiding the error message
@@ -287,13 +282,63 @@
             else {
                 // If no error message, show success directly
                 if (successMessage) {
-                    setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
+                    setTimeout(() => successMessage.remove(), 3000); // Remove success message after 5 seconds
                 }
             }
         });
     </script>
 @endif
-
+@if(session('importErrors'))
+    <div class="alert alert-danger" id="error-import" style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        width: 50%;
+        text-align: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    ">
+        <ul>
+            @foreach(session('importErrors') as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fade out success message after error message disappears
+            const errorMessage = document.getElementById('error-import');
+            const successMessage = document.getElementById('success-message');
+            
+            if (errorMessage) {
+                setTimeout(() => {
+                    errorMessage.style.transition = "opacity 0.5s";
+                    errorMessage.style.opacity = "0";
+                    setTimeout(() => {
+                        errorMessage.remove();
+                        if (successMessage) {
+                            successMessage.style.transition = "opacity 0.5s";
+                            successMessage.style.opacity = "1";
+                            setTimeout(() => successMessage.remove(), 3000); // Remove after 5 seconds
+                        }
+                    }, 500);
+                }, 3000); // Wait for 3 seconds before hiding the error message
+            }
+            else {
+                // If no error message, show success directly
+                if (successMessage) {
+                    setTimeout(() => successMessage.remove(), 3000); // Remove success message after 5 seconds
+                }
+            }
+        });
+    </script>
+@endif
 {{-- Flash Error Message --}}
 @if(session('error'))
     <div class="alert alert-danger" id="error-message" style="
@@ -328,7 +373,7 @@
                         if (successMessage) {
                             successMessage.style.transition = "opacity 0.5s";
                             successMessage.style.opacity = "1";
-                            setTimeout(() => successMessage.remove(), 5000); // Remove after 5 seconds
+                            setTimeout(() => successMessage.remove(), 3000); // Remove after 5 seconds
                         }
                     }, 500);
                 }, 3000); // Wait for 3 seconds before hiding the error message
@@ -336,7 +381,7 @@
             else {
                 // If no error message, show success directly
                 if (successMessage) {
-                    setTimeout(() => successMessage.remove(), 5000); // Remove success message after 5 seconds
+                    setTimeout(() => successMessage.remove(), 3000); // Remove success message after 5 seconds
                 }
             }
         });

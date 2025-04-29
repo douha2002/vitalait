@@ -62,8 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/equipments/store', [EquipmentController::class, 'store'])->name('equipments.store');
     Route::post('/equipments/import', [EquipmentController::class, 'import'])->name('equipments.import'); 
     Route::put('/equipments/{numero_de_serie}', [EquipmentController::class, 'update'])->name('equipments.update');
-    Route::delete('/equipments/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
-
+    Route::delete('/equipments/delete/{numero_de_serie}', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
 });
 Route::middleware(['auth'])->group(function () {
     Route::get('/assignments/search', [AssignmentController::class, 'search'])->name('assignments.search');
@@ -105,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employes/{matricule}/edit', [EmployeController::class, 'edit'])->name('employes.edit');
     Route::put('/employes/{matricule}', [EmployeController::class, 'update'])->name('employes.update');
     Route::delete('/employes/{id}', [EmployeController::class, 'destroy'])->name('employes.destroy');
-    
+    Route::get('/employes/data', [EmployeController::class, 'getData'])->name('employes.data');
     });
 
     Route::middleware(['auth'])->group(function () {

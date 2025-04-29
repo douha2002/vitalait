@@ -106,7 +106,7 @@
     <!-- Table Fournisseurs -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table class="table table-hover table-bordered">
+            <table id="fournisseursTable" class="table table-hover table-bordered">
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center"><i class="fas fa-truck"></i> Nom</th>
@@ -116,18 +116,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($fournisseurs->isEmpty())
-                    <tr>
-                        <td colspan="4" class="text-center">Aucun fournisseur trouvé.</td>
-                    </tr>
-                @else
                         @foreach($fournisseurs as $fournisseur)
                             <tr>
                                 <td class="text-center">{{ $fournisseur->nom }}</td>
                                 <td class="text-center">{{ $fournisseur->email }}</td>
                                 <td class="text-center">{{ $fournisseur->numero_de_telephone }}</td>
-                                <td class="d-flex justify-content-center justify-content-between justify-content-md-around">
-                                    <!-- Bouton Modifier -->
+                                <td class="text-center"> 
+                                    <div class="d-flex justify-content-center gap-2">                                    <!-- Bouton Modifier -->
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFournisseurModal{{ $fournisseur->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -182,7 +177,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                    @endif
                 </tbody>
             </table>
         </div>
@@ -287,6 +281,17 @@
 </script>
 
 @endif
-
+<script>
+    $(document).ready(function () {
+        $('#fournisseursTable').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+            },
+            paging: true,
+            searching: false,
+            info: true
+        });
+    });
+</script>
 @include('layouts.sidebar')
 @endsection
